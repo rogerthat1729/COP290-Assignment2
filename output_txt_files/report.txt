@@ -1,0 +1,775 @@
+Total number of pages: 5
+Text on page:0
+Processor – Part 4  
+Single-cycle CPU 
+ 
+We tested our processor on 2 codes written on RARS 1.6 in RISC-V assembly. 
+ 
+Top-level View of the CPU: 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+File Edit Project Simulate FPGA Window Help
+
+ 
+
+Design Simulate bRLalpol|mpoo pom ge
+DODO
+
+‘Active Simulations
+
+eck
+
+‘GJ main(660.470)
+{G] atumain(1290,420)
+{gf decodemain(780,700)
+‘GF DMem(1400,550)
+EF Imem(590,360)
+EJ Pc(a70,410)
+EF regmainga130,420)
+
+ 
+
+ 
+
+ 
+
+ 
+
+jade (Mem inst
+
+ 
+
+ 
+
+ 
+
+Properties State
+CA sooo SSR
+rennase aan
+
+Stared tabl Fac. Eat
+ree come
+pecmduewaie Yes
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+@ sa.04 @
+
+   
+
+ 
+
+ 
+
+oecode
+
+       
+ 
+
+Memfead
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Text on page:1
+Code 1: 
+ 
+ 
+The machine code we fed into IMem: 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+  
+
+ 
+
+ 
+
+ 
+
+ 
+
+    
+
+O\%/&/2 o\¢\s/c/O\e| « e oo =
+= : 2 ae
+oa 2 Sa
+SS Ser
+
+ 
+
+a
+
+So a ST
+
+DEDOS
+i
+G mangeso.4
+Sie
+Boe,
+Beers
+
+ 
+
+ 
+
+ 
+
+Ehregmanaiso 20)
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Properties State
+re
+topes
+
+ 
+
+ 
+
+ 
+
+Text on page:2
+ 
+Register file of CPU after execution: 
+ 
+ 
+DMem of CPU after execution: 
+ 
+ 
+ 
+ 
+
+ 
+
+Fle Edt Proc Simul FPGA Winsow Hep
+
+Design Simulate
+DHOTS
+Gran
+Bac
+‘Cl maiyseo.470)
+{J sumancv0.c20)
+{Ef cecosemainran,700)
+EJowemoo.sso)
+J mens 380)
+Gfecisro.ain
+Eregnainc20 420)
+
+Properties State
+isi ropes
+
+Ft spor
+
+Srv ae
+
+Shared ae F. Soe Bl 18
+
+fears came
+
+Cromonste Ys
+
+x08 @
+
+ 
+
+aoe
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ABs aloolpoov orga
+1
+wd |]
+write{}-—
+\iteRegister.rd
+cut
+
+Writepata|
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+L__frsrjResdnegistert rot
+
+ 
+
+ 
+
+ 
+
+L__frsrJresdnegistera 122
+
+Fis Est roc Senate FPGA. Winn
+Design simulate SBP Alo Ol-oreoclag
+DHoLE
+Gon
+Bec
+‘Tmaneso470
+
+GJ aumarcion 20)
+
+Boecrdensin. 70)
+
+Eowens0035
+
+Emer 350
+
+Grcoman
+
+Eircoran a0)
+
+ 
+
+ 
+
+ 
+
+RAM TOME
+addr [a5000— Pe é
+P42 (Whe Grable)
+
+Wel>>——J
+eee
+
+Ie haple
+
+le
+
+ie
+
+I
+the eal
+or
+
+ 
+
+ 
+
+the enal
+
+   
+
+ 
+
+    
+
+Do0000D,
+
+20000000, Dout
+
+ 
+
+ 
+
+ 
+
+  
+ 
+
+   
+  
+
+TENE
+—
+
+CA poet:
+
+ee eat cu
+
+ 
+
+ 
+
+ 
+
+ 
+
+     
+
+90001400 00 00 0
+
+*42°-99901800 00 00 oF
+
+ 
+
+ 
+
+ 
+
+ 
+
+  
+
+ 
+
+ 
+
+ 
+
+ 
+
+   
+
+Text on page:3
+ 
+Code 2: 
+ 
+ 
+The machine code we fed into IMem: 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+    
+
+ 
+
+ 
+
+   
+
+ 
+
+ 
+
+ 
+
+ 
+
+    
+
+$store casts [x] Pnenadeimaladsestes i Wenadncnal valine (JASE
+
+ 
+
+ 
+
+ 
+
+le Est Propel Sinule FPGA WinSon Hep
+Design Skoulate sr alool-oppoolas
+09S
+
+Gran
+
+Goce
+
+‘Cmanyoto 470)
+
+{aut .20)
+
+]secosman 70) Ar D> y
+
+Goes Ub, )asermas
+{versio 20
+
+Hrcaroain
+
+Ehregraincia0 420)
+
+ 
+
+   
+ 
+  
+
+ 
+
+ 
+
+ 
+
+a) |) 2) (9) ¢ [aloo e\ |x
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+  
+ 
+  
+
+   
+ 
+
+Properties State
+Circa: Mem
+FCA supcones: SSS
+
+ 
+
+ 
+
+ 
+
+ 
+
+Text on page:4
+ 
+ 
+Register file of CPU after execution: 
+ 
+ 
+Thus, we can see that the register file and DMem of CPU matches with the 
+registers and memory in RARS in both cases. 
+ 
+
+ 
+
+Fle E6t Prop Simuse FPGA Window Hep
+Design _Skoulate Sh TAD OleoD Doing
+DHSS
+Goan
+Gos
+‘Ch mances.47)
+
+{J aumaniz00.20
+
+{J aecosemana0 700
+
+Lowers.)
+
+Ey nemo 38)
+
+Gecar.a0
+
+Bregmanaio.20)
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+L__frsrjResdnegistert rot
+
+ 
+
+ 
+
+Properties State wd |
+
+Fs
+ec
+
+Srv ae
+
+Shred elf Seer Pn 2
+fears came
+
+Creme enste_ Ne
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+write[3}-—
+
+ 
+
+WriteRegister rd
+
+ 
+
+cul
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+L__frsrJresdnegistera 122
+
+Writepata|
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+x08 @
+
+ 
+
+aoe
+
