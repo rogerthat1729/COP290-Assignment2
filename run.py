@@ -1,6 +1,7 @@
 import whisper
 from moviepy.editor import VideoFileClip as VFC
 import PyPDF2
+import fitz as PyMuPDF
 import sys
 
 type = sys.argv[1]
@@ -20,11 +21,11 @@ elif type == 'pdf':
     path = "test_pdfs/"+name
     txt = ""
     with open(path, 'rb') as f:
-        pdfread = PyPDF2.PdfReader(f)
-        num_pages = len(pdfread.pages)
+        pdfread = PyMuPDF.open(path)
+        num_pages = len(pdfread)
         txt += ("Total number of pages: "+str(num_pages)+"\n")
         for page_num in range(num_pages):
-            text = (pdfread.pages[page_num]).extract_text() 
+            text = pdfread[page_num].get_text()
             txt += ("Text on page:"+str(page_num)+"\n") + text + "\n"
     file.write(txt)
 else:
