@@ -19,6 +19,8 @@ class Player(pygame.sprite.Sprite):
 		self.is_textbox_active = False
 		self.textbox_content = ""
 
+		self.popup = Popup("", 500, 60)
+
 		self.direction = pygame.math.Vector2()
 		self.speed = 5
 
@@ -40,8 +42,11 @@ class Player(pygame.sprite.Sprite):
 				self.direction.x = -1
 			else:
 				self.direction.x = 0
-		
-		if keys[pygame.K_1] and self.wait==0:
+			
+			if keys[pygame.K_ESCAPE] and self.popup.active:
+				self.popup.active = False
+
+		if keys[pygame.K_1] and self.wait==0 and not self.popup.active:
 			self.is_textbox_active = not self.is_textbox_active
 			self.textbox_content = ""
 			self.wait = 100

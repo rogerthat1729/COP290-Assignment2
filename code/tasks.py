@@ -1,8 +1,11 @@
 import pygame
 from random import choice
 
-all_tasks = ["Talk on phone", "Go to balcony", "Clean your room"]
+good_tasks = ["Talk on phone", "Go to balcony", "Clean your room"]
 task_to_seq = {"Talk on phone": "PHONE", "Go to balcony": "BALCONY", "Clean your room":"CLEAN"}
+
+bad_tasks = [["You browsed through social media for 2 hours.",  "Your happiness is reduced by 10 points."]]
+
 pygame.init()
 font = pygame.font.Font(None,30)
 
@@ -23,8 +26,8 @@ def render_tasks(level):
     if level.player.done_task==1:
         level.player.textbox_content = ""
         level.task_list.pop(0)
-        level.task_list.append(choice(all_tasks))
-        level.happy = min(100, level.happy+5)
+        level.task_list.append(choice(good_tasks))
+        level.happy = min(100, level.happy+10)
         level.player.done_task = 0
 
 def render_textbox(task, content, level):
@@ -34,8 +37,45 @@ def render_textbox(task, content, level):
     # Draw the textbox background
     textbox_rect = pygame.Rect(600, 100, 200, 50)
     pygame.draw.rect(screen, (255, 255, 255), textbox_rect)
+    border_rect = textbox_rect.copy()
+    pygame.draw.rect(screen, (0, 0, 0), border_rect, 3)
     # Render the textbox content
     text_surface = font.render(content, True, (0, 0, 0))
     screen.blit(text_surface, (610, 110))
     if content == task_to_seq[task]:
         level.player.done_task = 1
+        level.player.is_textbox_active = False
+
+def show_popup(level, task):
+    # bad_task = bad_tasks[0]
+    level.player.popup.text = task
+    level.player.popup.show(level.display_surface)
+
+class Popup:
+    def __init__(self, text, width=300, height=100):
+        self.text = text
+        self.width = width
+        self.height = height
+        self.font = pygame.font.Font(None, 36)
+        self.active = False
+
+    def show(self, screen):
+        if not self.active:
+            return
+
+        x = (screen.get_width() - self.width) // 2
+        y = (screen.get_height() - self.height) // 2
+
+        popup_rect = pygame.Rect(x, y, self.width, self.height)
+        pygame.draw.rect(screen, (255, 255, 255), popup_rect)
+        border = popup_rect.copy()
+        pygame.draw.rect(screen, (0, 0, 0), border, 3)
+
+        y_offset = 5
+        for line in self.text:
+            line_surface = font.render(line, True, 'black')
+            screen.blit(line_surface, (x, y+y_offset))
+            y_offset += font.get_linesize()
+
+    def toggle(self):
+        self.active = not self.active

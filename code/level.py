@@ -7,6 +7,8 @@ from support import *
 from random import choice
 from tasks import *
 
+bad_tasks = [["You browsed through social media for 2 hours.",  "Your happiness is reduced by 10 points."], ["A", "B"], ["C", "D"]]
+
 class Level:
 	def __init__(self):
 
@@ -21,8 +23,10 @@ class Level:
 		#tasks
 		self.happy = 50
 		self.task_list = ["Talk on phone", "Go to balcony", "Clean your room"]
+		self.bad_task = ""
 
 		self.brightness_wait = 0
+		self.pop_up_wait = 0
 
 		# sprite setup
 		self.create_map()
@@ -60,12 +64,26 @@ class Level:
 		self.overlay.fill((0, 0, 0, alpha)) 
 		self.display_surface.blit(self.overlay, (0, 0))
 		pygame.display.flip()
+	
+	def handle_popup(self):
+		if self.pop_up_wait >= 200 and (not self.player.is_textbox_active):
+			self.bad_task = choice(bad_tasks)
+			self.pop_up_wait = 0
+			self.player.popup.active = True
+			self.happy = max(0, self.happy-10)
+		elif (not self.player.popup.active) and (not self.player.is_textbox_active):
+			self.pop_up_wait += 1
+
+		if self.player.popup.active:
+			show_popup(self, self.bad_task)
+		
 
 	def run(self):
 		self.visible_sprites.custom_draw(self.player)
 		self.visible_sprites.update()
 		render_tasks(self)
 		render_textbox(self.task_list[0], self.player.textbox_content, self)
+		self.handle_popup()
 		self.update_brightness()
 
 
