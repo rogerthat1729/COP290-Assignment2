@@ -6,6 +6,21 @@ from debug import debug
 from support import *
 from random import choice
 from tasks import *
+# import pandas as pd
+
+def create_radial_gradient(width, height, inner_color, outer_color):
+    """Create a simplified radial gradient surface."""
+    surface = pygame.Surface((width, height), pygame.SRCALPHA)
+    center = (width // 2, height // 2)
+    max_radius = int(max(center[0], center[1]) * 1.414)  # Diagonal length
+    num_circles = 20  # Number of concentric circles. Adjust for smoothness.
+
+    for i in range(num_circles, 0, -1):
+        radius = (i / num_circles) * max_radius
+        color = [inner_color[j] + (outer_color[j] - inner_color[j]) * (i / num_circles) for j in range(4)]
+        pygame.draw.circle(surface, color, center, int(radius))
+    
+    return surface
 
 bad_tasks = {1:["You browsed through social media for 2 hours.",  "Your happiness is reduced by 10 points."],
 			  2:["You ate a lot of junk food.", "Your happiness is reduced by 10 points."],
@@ -25,8 +40,10 @@ class Level:
 
 		#tasks
 		self.happy = 50
-		self.task_list = ["Talk on phone", "Go to balcony", "Clean your room"]
+		self.task_list = ["Talk on phone - type PHONE", "Go to balcony - type BALCONY", "Clean your room - type CLEAN"]
 		self.bad_task = ""
+		self.player = Player((1980,1500),[self.visible_sprites],self.obstacle_sprites)
+		self.player.speed = (self.happy/100)*10
 
 		self.brightness_wait = 0
 		self.pop_up_wait = 0
@@ -36,13 +53,12 @@ class Level:
 
 	def create_map(self):
 		layouts = {
-			'boundary': import_csv_layout('../map/goodmap_FloorBlocks.csv'),
+			'boundary': import_csv_layout('../map/map1_FloorBlocks.csv'),
 			'grass': import_csv_layout('../map/map1_Grass.csv'),
-			'object': import_csv_layout('../map/map1_Objects.csv'),
+			'object': import_csv_layout('../map/map1_Objects.csv')
 		}
 		graphics = {
-			'grass': import_folder('../graphics/grass'),
-			'objects': import_folder('../graphics/objects')
+			'objects': import_folder_for_objects('../graphics1')
 		}
 
 		for style,layout in layouts.items():
@@ -53,20 +69,22 @@ class Level:
 						y = row_index * TILESIZE
 						if style == 'boundary':
 							Tile((x,y),[self.obstacle_sprites],'invisible')
-						if style == 'grass':
-							random_grass_image = choice(graphics['grass'])
-							Tile((x,y),[self.visible_sprites,self.obstacle_sprites],'grass',random_grass_image)
 						if style == 'object':
 							surf = graphics['objects'][int(col)]
 							Tile((x,y),[self.visible_sprites,self.obstacle_sprites],'object',surf)
 
-		self.player = Player((1980,1500),[self.visible_sprites],self.obstacle_sprites)
-	
 	def update_brightness(self):
+		width, height = self.display_surface.get_size()
+		# Colors: inner (more transparent) and outer (less transparent)
+		# Adjust alpha values based on happiness
 		alpha = max(0, min(255, 255 - (self.happy * 2.55)))
-		self.overlay.fill((0, 0, 0, alpha)) 
-		self.display_surface.blit(self.overlay, (0, 0))
+		inner_color = (0, 0, 0, alpha/2)  # Fully transparent at center
+		outer_color = (0, 0, 0, min(alpha*6, 255))  # Outer color's alpha based on happiness
+		
+		gradient_overlay = create_radial_gradient(width, height, inner_color, outer_color)
+		self.display_surface.blit(gradient_overlay, (0, 0))
 		pygame.display.flip()
+
 	
 	def handle_popup(self):
 		if self.pop_up_wait >= 200 and (not self.player.is_textbox_active):
@@ -102,7 +120,7 @@ class YSortCameraGroup(pygame.sprite.Group):
 		self.offset = pygame.math.Vector2()
 
 		# creating the floor
-		self.floor_surf = pygame.image.load('../graphics/tilemap/basic_map.png').convert()
+		self.floor_surf = pygame.image.load('../map/basic_map.png').convert()
 		self.floor_rect = self.floor_surf.get_rect(topleft = (0,0))
 
 	def custom_draw(self,player):
@@ -119,3 +137,7 @@ class YSortCameraGroup(pygame.sprite.Group):
 		for sprite in sorted(self.sprites(),key = lambda sprite: sprite.rect.centery):
 			offset_pos = sprite.rect.topleft - self.offset
 			self.display_surface.blit(sprite.image,offset_pos)
+
+# df = pd.read_csv('../map/map1_Objects.csv')
+# print(df)
+# import_folder('../graphics1')

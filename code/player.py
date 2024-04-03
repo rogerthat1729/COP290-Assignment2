@@ -28,7 +28,6 @@ class Player(pygame.sprite.Sprite):
 		self.popup = Popup("", 500, 60)
 
 		self.direction = pygame.math.Vector2()
-		self.speed = 5
 
 		self.obstacle_sprites = obstacle_sprites
 

@@ -1,8 +1,8 @@
 import pygame
 from random import choice
 
-good_tasks = ["Talk on phone", "Go to balcony", "Clean your room"]
-task_to_seq = {"Talk on phone": "PHONE", "Go to balcony": "BALCONY", "Clean your room":"CLEAN"}
+good_tasks = ["Talk on phone - type PHONE", "Go to balcony - type BALCONY", "Clean your room - type CLEAN"]
+task_to_seq = {"Talk on phone - type PHONE": "PHONE", "Go to balcony - type BALCONY": "BALCONY", "Clean your room - type CLEAN":"CLEAN"}
 
 bad_tasks = [["You browsed through social media for 2 hours.",  "Your happiness is reduced by 10 points."]]
 
@@ -12,7 +12,7 @@ font = pygame.font.Font(None,30)
 def render_tasks(level):
     task_list = level.task_list
     y = 20
-    display_surf = pygame.display.get_surface()
+    display_surf = level.display_surface
     happy_surf = font.render(f"Happy Index: {int(level.happy)}", True, (0, 255, 0))
     task_rect = happy_surf.get_rect(topleft = (10, y))
     pygame.draw.rect(display_surf,'Black',task_rect)
@@ -33,7 +33,7 @@ def render_tasks(level):
 def render_textbox(task, content, level):
     if not level.player.is_textbox_active:
         return
-    screen = pygame.display.get_surface()
+    screen = level.display_surface
     # Draw the textbox background
     textbox_rect = pygame.Rect(600, 100, 200, 50)
     pygame.draw.rect(screen, (255, 255, 255), textbox_rect)
