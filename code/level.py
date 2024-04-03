@@ -7,7 +7,10 @@ from support import *
 from random import choice
 from tasks import *
 
-bad_tasks = [["You browsed through social media for 2 hours.",  "Your happiness is reduced by 10 points."], ["A", "B"], ["C", "D"]]
+bad_tasks = {1:["You browsed through social media for 2 hours.",  "Your happiness is reduced by 10 points."],
+			  2:["You ate a lot of junk food.", "Your happiness is reduced by 10 points."],
+			    3:["You watched TV for 3 hours", "Your happiness is reduced by 15 points"]}
+happiness_reduced = {1:10, 2:10, 3:15}
 
 class Level:
 	def __init__(self):
@@ -33,7 +36,7 @@ class Level:
 
 	def create_map(self):
 		layouts = {
-			'boundary': import_csv_layout('../map/map1_FloorBlocks.csv'),
+			'boundary': import_csv_layout('../map/goodmap_FloorBlocks.csv'),
 			'grass': import_csv_layout('../map/map1_Grass.csv'),
 			'object': import_csv_layout('../map/map1_Objects.csv'),
 		}
@@ -67,10 +70,11 @@ class Level:
 	
 	def handle_popup(self):
 		if self.pop_up_wait >= 200 and (not self.player.is_textbox_active):
-			self.bad_task = choice(bad_tasks)
+			bad_task_index = choice(list(bad_tasks.keys()))
+			self.bad_task = bad_tasks[bad_task_index]
 			self.pop_up_wait = 0
 			self.player.popup.active = True
-			self.happy = max(0, self.happy-10)
+			self.happy = max(0, self.happy-happiness_reduced[bad_task_index])
 		elif (not self.player.popup.active) and (not self.player.is_textbox_active):
 			self.pop_up_wait += 1
 
