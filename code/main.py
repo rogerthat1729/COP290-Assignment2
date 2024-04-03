@@ -4,10 +4,8 @@ from level import Level
 
 class Game:
 	def __init__(self):
-
-		# general setup
 		pygame.init()
-		self.screen = pygame.display.set_mode((WIDTH,HEIGTH))
+		self.screen = pygame.display.set_mode((WIDTH,HEIGTH), pygame.DOUBLEBUF)
 		pygame.display.set_caption('Zelda')
 		self.clock = pygame.time.Clock()
 

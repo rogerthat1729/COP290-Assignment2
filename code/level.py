@@ -12,6 +12,7 @@ class Level:
 
 		# get the display surface 
 		self.display_surface = pygame.display.get_surface()
+		self.overlay = pygame.Surface(self.display_surface.get_size(), pygame.SRCALPHA)
 
 		# sprite group setup
 		self.visible_sprites = YSortCameraGroup()
@@ -20,6 +21,8 @@ class Level:
 		#tasks
 		self.happy = 50
 		self.task_list = ["Talk on phone", "Go to balcony", "Clean your room"]
+
+		self.brightness_wait = 0
 
 		# sprite setup
 		self.create_map()
@@ -51,13 +54,19 @@ class Level:
 							Tile((x,y),[self.visible_sprites,self.obstacle_sprites],'object',surf)
 
 		self.player = Player((1980,1500),[self.visible_sprites],self.obstacle_sprites)
+	
+	def update_brightness(self):
+		alpha = max(0, min(255, 255 - (self.happy * 2.55)))
+		self.overlay.fill((0, 0, 0, alpha)) 
+		self.display_surface.blit(self.overlay, (0, 0))
+		pygame.display.flip()
 
 	def run(self):
-		# update and draw the game
 		self.visible_sprites.custom_draw(self.player)
 		self.visible_sprites.update()
 		render_tasks(self)
 		render_textbox(self.task_list[0], self.player.textbox_content, self)
+		self.update_brightness()
 
 
 class YSortCameraGroup(pygame.sprite.Group):
