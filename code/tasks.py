@@ -3,8 +3,7 @@ from random import choice
 
 good_tasks = ["Talk on phone - type PHONE", "Go to balcony - type BALCONY", "Clean your room - type CLEAN"]
 task_to_seq = {"Talk on phone - type PHONE": "PHONE", "Go to balcony - type BALCONY": "BALCONY", "Clean your room - type CLEAN":"CLEAN"}
-
-bad_tasks = [["You browsed through social media for 2 hours.",  "Your happiness is reduced by 10 points."]]
+taskobj = {"PHONE":"phone", "BALCONY":"chair", "CLEAN":"bed"}
 
 pygame.init()
 font = pygame.font.Font(None,30)
@@ -42,7 +41,7 @@ def render_textbox(task, content, level):
     # Render the textbox content
     text_surface = font.render(content, True, (0, 0, 0))
     screen.blit(text_surface, (610, 110))
-    if content == task_to_seq[task]:
+    if content == task_to_seq[task] and level.check_near_object(taskobj[task_to_seq[task]]):
         level.player.done_task = 1
         level.player.is_textbox_active = False
 

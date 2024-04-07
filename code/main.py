@@ -5,7 +5,7 @@ from level import Level
 class Game:
 	def __init__(self):
 		pygame.init()
-		self.screen = pygame.display.set_mode((WIDTH,HEIGTH), pygame.DOUBLEBUF)
+		self.screen = pygame.display.set_mode((WIDTH,HEIGHT), pygame.DOUBLEBUF)
 		pygame.display.set_caption('Dempression')
 		self.clock = pygame.time.Clock()
 
@@ -20,7 +20,7 @@ class Game:
 					sys.exit()
 			self.screen.fill('black')
 			self.level.run()
-			pygame.display.update()
+			pygame.display.flip()
 			self.clock.tick(FPS)
 
 if __name__ == '__main__':
