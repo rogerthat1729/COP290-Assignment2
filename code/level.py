@@ -12,7 +12,7 @@ import math
 # surf = graphics['objects'][int(col)]
 # Tile((x,y),[self.visible_sprites,self.obstacle_sprites],'object',surf, col)
 
-index_to_name = {1419:'chair'}
+index_to_name = {1419:'chair', 1389:'trashcan'}
 
 def create_radial_gradient(width, height, inner_color, outer_color):
     surface = pygame.Surface((width, height), pygame.SRCALPHA)
@@ -51,7 +51,7 @@ bad_tasks = {1:["You browsed through social media for 2 hours.",  "Your happines
 			  2:["You ate a lot of junk food.", "Your happiness is reduced by 10 points."],
 			    3:["You watched TV for 3 hours", "Your happiness is reduced by 15 points"]}
 happiness_reduced = {1:10, 2:10, 3:15}
-task_to_obj = {"PHONE":"phone", "BALCONY":"balcony_chair", "CLEAN":"bed"}
+task_to_obj = {"PHONE":"phone", "BALCONY":"balcony_chair", "TRASH":"trashcan"}
 
 class Level:
 	def __init__(self):
@@ -66,7 +66,7 @@ class Level:
 
 		#tasks
 		self.happy = 50
-		self.task_list = ["Talk on phone - type PHONE", "Go to balcony - type BALCONY", "Clean your room - type CLEAN"]
+		self.task_list = ["Talk on phone - type PHONE", "Go to balcony - type BALCONY", "Clean out the trash - type TRASH"]
 		self.bad_task = ""
 		self.player = Player((1980,1500),[self.visible_sprites],self.obstacle_sprites)
 		self.player.speed = (self.happy/100)*15

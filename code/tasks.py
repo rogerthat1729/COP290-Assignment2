@@ -1,9 +1,9 @@
 import pygame
 from random import choice
 
-good_tasks = ["Talk on phone - type PHONE", "Go to balcony - type BALCONY", "Clean your room - type CLEAN"]
-task_to_seq = {"Talk on phone - type PHONE": "PHONE", "Go to balcony - type BALCONY": "BALCONY", "Clean your room - type CLEAN":"CLEAN"}
-taskobj = {"PHONE":"phone", "BALCONY":"chair", "CLEAN":"bed"}
+good_tasks = ["Talk on phone - type PHONE", "Go to balcony - type BALCONY", "Clean out the trash - type TRASH"]
+task_to_seq = {"Talk on phone - type PHONE": "PHONE", "Go to balcony - type BALCONY": "BALCONY", "Clean out the trash - type TRASH":"TRASH"}
+taskobj = {"PHONE":"phone", "BALCONY":"chair", "TRASH":"trashcan"}
 
 pygame.init()
 font = pygame.font.Font(None,30)
