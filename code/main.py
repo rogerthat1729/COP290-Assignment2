@@ -13,7 +13,7 @@ class Game:
 	
 	def run(self):
 		while True:
-			self.level.player.events = pygame.event.get()
+			self.level.events = pygame.event.get()
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					pygame.quit()

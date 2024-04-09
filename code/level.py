@@ -7,6 +7,8 @@ from support import *
 from random import choice
 from tasks import *
 import math
+import sys
+import time
 
 index_to_name = {1419:'chair', 1389:'trashcan', 1357:'telephone', 1485:'bathtub', 1386:'sink', 1390:'books', 
 				 1391:'notes'}
@@ -48,7 +50,7 @@ bad_tasks = {1:["You browsed through social media for 2 hours.",  "Your happines
 			  2:["You ate a lot of junk food.", "Your happiness is reduced by 10 points."],
 			    3:["You watched TV for 3 hours", "Your happiness is reduced by 15 points"]}
 happiness_reduced = {1:10, 2:10, 3:15}
-task_to_obj = {"PHONE":"telephone", "BALCONY":"chair", "TRASH":"trashcan"}
+task_to_obj = {"Talk on phone - type PHONE":'telephone', "Go to balcony - type BALCONY":'chair', "Clean out the trash - type TRASH":'trashcan'}
 
 class Level:
 	def __init__(self):
@@ -67,9 +69,15 @@ class Level:
 		self.bad_task = ""
 		self.player = Player((1980,1500),[self.visible_sprites],self.obstacle_sprites)
 		self.player.speed = (self.happy/100)*10
+		self.player.vis_sprites = self.visible_sprites
 
 		self.brightness_wait = 0
 		self.pop_up_wait = 0
+		
+		self.events = []
+
+		self.nearest_object = None
+		self.interact_time = None
 
 		# sprite setup
 		self.create_map()
@@ -119,17 +127,59 @@ class Level:
 		pygame.display.flip()
 	
 	def handle_popup(self):
-		if self.pop_up_wait >= 1200 and (not self.player.is_textbox_active):
+		if self.pop_up_wait >= 1200 and not self.interact_time:
 			bad_task_index = choice(list(bad_tasks.keys()))
 			self.bad_task = bad_tasks[bad_task_index]
 			self.pop_up_wait = 0
 			self.player.popup.active = True
 			self.happy = max(0, self.happy-happiness_reduced[bad_task_index])
-		elif (not self.player.popup.active) and (not self.player.is_textbox_active):
+		elif (not self.player.popup.active) and (not self.interact_time):
 			self.pop_up_wait += 1
-
 		if self.player.popup.active:
 			show_popup(self, self.bad_task)
+ 
+	def input(self):
+		keys = pygame.key.get_pressed()
+		# if not self.is_textbox_active:
+		if keys[pygame.K_w]:
+			self.player.direction.y = -1
+			self.player.status = 'up'
+		elif keys[pygame.K_s]:
+			self.player.direction.y = 1
+			self.player.status = 'down'
+		else:
+			self.player.direction.y = 0
+
+		if keys[pygame.K_d]:
+			self.player.direction.x = 1
+			self.player.status = 'right'
+		elif keys[pygame.K_a]:
+			self.player.direction.x = -1
+			self.player.status = 'left'
+		else:
+			self.player.direction.x = 0
+		
+		if keys[pygame.K_ESCAPE] and self.player.popup.active:
+			self.player.popup.active = False
+		
+		for event in self.events:
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				sys.exit()
+			elif event.type == pygame.KEYDOWN and event.key == pygame.K_i:
+				if self.nearest_object and not self.interact_time:
+					self.interact_time = time.time()
+			elif event.type == pygame.KEYUP and event.key == pygame.K_i and self.interact_time:
+				self.interact_time = None
+		
+		if self.player.done_task == 0 and self.interact_time and self.nearest_object.name == task_to_obj[self.task_list[0]]:
+			draw_loading_bar(self.display_surface, self.interact_time)
+		
+		if self.interact_time:
+			if time.time() - self.interact_time >= 3 and self.nearest_object.name == task_to_obj[self.task_list[0]]:
+				self.player.done_task = 1
+				self.interact_time = None
+				# print("Task done")
 	
 	def activate_objects(self):
 		player = self.player
@@ -137,10 +187,15 @@ class Level:
 			if spr.sprite_type == 'object' and spr.name:
 				if abs(player.rect.centerx - spr.rect.centerx) < 100 and abs(player.rect.centery - spr.rect.centery) < 100:
 					spr.active = 1
+					self.nearest_object = spr
+					# set_nearest_object(self.player, spr)
+					# print(spr)
+					# print("player's nearest obj is", spr.name)
 				else:
 					spr.active = 0
+					# self.player.nearest_obj = None
 				spr.update_image()
-
+	
 	def check_near_object(self, objname):
 		player = self.player
 		for sprite in self.visible_sprites.sprites():
@@ -152,11 +207,12 @@ class Level:
 	def run(self):
 		self.visible_sprites.custom_draw(self.player)
 		self.visible_sprites.update()
+		self.input()
 		self.activate_objects() 
 		# print(self.check_near_object('chair'))
 		if(self.happy>0):
 			render_tasks(self)
-			render_textbox(self.task_list[0], self.player.textbox_content, self)
+			# render_textbox(self.task_list[0], self.player.textbox_content, self)
 			self.handle_popup()
 		else:
 			show_popup(self, ["Game Over."])
