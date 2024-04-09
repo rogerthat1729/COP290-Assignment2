@@ -7,12 +7,9 @@ from support import *
 from random import choice
 from tasks import *
 import math
-# import pandas as pd
 
-# surf = graphics['objects'][int(col)]
-# Tile((x,y),[self.visible_sprites,self.obstacle_sprites],'object',surf, col)
-
-index_to_name = {1419:'chair', 1389:'trashcan'}
+index_to_name = {1419:'chair', 1389:'trashcan', 1357:'telephone', 1485:'bathtub', 1386:'sink', 1390:'books', 
+				 1391:'notes'}
 
 def create_radial_gradient(width, height, inner_color, outer_color):
     surface = pygame.Surface((width, height), pygame.SRCALPHA)
@@ -51,7 +48,7 @@ bad_tasks = {1:["You browsed through social media for 2 hours.",  "Your happines
 			  2:["You ate a lot of junk food.", "Your happiness is reduced by 10 points."],
 			    3:["You watched TV for 3 hours", "Your happiness is reduced by 15 points"]}
 happiness_reduced = {1:10, 2:10, 3:15}
-task_to_obj = {"PHONE":"phone", "BALCONY":"balcony_chair", "TRASH":"trashcan"}
+task_to_obj = {"PHONE":"telephone", "BALCONY":"chair", "TRASH":"trashcan"}
 
 class Level:
 	def __init__(self):
@@ -65,11 +62,11 @@ class Level:
 		self.obstacle_sprites = pygame.sprite.Group()
 
 		#tasks
-		self.happy = 50
+		self.happy = 80
 		self.task_list = ["Talk on phone - type PHONE", "Go to balcony - type BALCONY", "Clean out the trash - type TRASH"]
 		self.bad_task = ""
 		self.player = Player((1980,1500),[self.visible_sprites],self.obstacle_sprites)
-		self.player.speed = (self.happy/100)*15
+		self.player.speed = (self.happy/100)*10
 
 		self.brightness_wait = 0
 		self.pop_up_wait = 0
@@ -108,16 +105,13 @@ class Level:
 								# print("here")
 								surf = graphics['objects'][idx]
 								Tile((x,y),[self.visible_sprites,self.obstacle_sprites],'object',[surf])
-						else:
-							surf = graphics['objects'][idx]
-							Tile((x,y),[self.visible_sprites],'object',[surf])
 
 	def update_brightness(self):
 		width, height = self.display_surface.get_size()
 		# Colors: inner (more transparent) and outer (less transparent)
 		# Adjust alpha values based on happiness
 		alpha = happiness_to_alpha(self.happy)
-		inner_color = (0, 0, 0, alpha/2)  # Fully transparent at center
+		inner_color = (0, 0, 0, 0)  # Fully transparent at center
 		outer_color = (0, 0, 0, min(alpha*4, 255))  # Outer color's alpha based on happiness
 		
 		gradient_overlay = create_radial_gradient(width, height, inner_color, outer_color)
@@ -125,7 +119,7 @@ class Level:
 		pygame.display.flip()
 	
 	def handle_popup(self):
-		if self.pop_up_wait >= 600 and (not self.player.is_textbox_active):
+		if self.pop_up_wait >= 1200 and (not self.player.is_textbox_active):
 			bad_task_index = choice(list(bad_tasks.keys()))
 			self.bad_task = bad_tasks[bad_task_index]
 			self.pop_up_wait = 0

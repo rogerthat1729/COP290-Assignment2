@@ -3,7 +3,7 @@ from random import choice
 
 good_tasks = ["Talk on phone - type PHONE", "Go to balcony - type BALCONY", "Clean out the trash - type TRASH"]
 task_to_seq = {"Talk on phone - type PHONE": "PHONE", "Go to balcony - type BALCONY": "BALCONY", "Clean out the trash - type TRASH":"TRASH"}
-taskobj = {"PHONE":"phone", "BALCONY":"chair", "TRASH":"trashcan"}
+taskobj = {"PHONE":"telephone", "BALCONY":"chair", "TRASH":"trashcan"}
 
 pygame.init()
 font = pygame.font.Font(None,30)
