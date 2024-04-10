@@ -118,18 +118,16 @@ class Level:
 
 	def update_brightness(self):
 		width, height = self.display_surface.get_size()
-		# Colors: inner (more transparent) and outer (less transparent)
-		# Adjust alpha values based on happiness
 		alpha = happiness_to_alpha(self.happy)
-		inner_color = (0, 0, 0, 0)  # Fully transparent at center
-		outer_color = (0, 0, 0, min(alpha*4, 255))  # Outer color's alpha based on happiness
+		inner_color = (0, 0, 0, 0)
+		outer_color = (0, 0, 0, min(alpha*4, 255))
 		
 		gradient_overlay = create_radial_gradient(width, height, inner_color, outer_color)
 		self.display_surface.blit(gradient_overlay, (0, 0))
 		pygame.display.flip()
 	
 	def handle_popup(self):
-		if self.pop_up_wait >= 1200 and not self.interact_time:
+		if self.pop_up_wait >= 600 and not self.interact_time:
 			bad_task_index = choice(list(bad_tasks.keys()))
 			self.bad_task = bad_tasks[bad_task_index]
 			self.pop_up_wait = 0
