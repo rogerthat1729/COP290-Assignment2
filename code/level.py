@@ -11,7 +11,7 @@ import sys
 import time
 
 index_to_name = {1419:'chair', 1389:'trashcan', 1357:'telephone', 1485:'bathtub', 1386:'sink', 1390:'books', 
-				 1391:'notes'}
+				 1391:'notes', 1480:'washing_machine'}
 
 def create_radial_gradient(width, height, inner_color, outer_color):
     surface = pygame.Surface((width, height), pygame.SRCALPHA)
@@ -50,7 +50,8 @@ bad_tasks = {1:["You browsed through social media for 2 hours.",  "Your happines
 			  2:["You ate a lot of junk food.", "Your happiness is reduced by 10 points."],
 			    3:["You watched TV for 3 hours", "Your happiness is reduced by 15 points"]}
 happiness_reduced = {1:10, 2:10, 3:15}
-task_to_obj = {"Talk on phone - type PHONE":'telephone', "Go to balcony - type BALCONY":'chair', "Clean out the trash - type TRASH":'trashcan'}
+task_to_obj = {"Talk on phone":'telephone', "Go to balcony":'chair', "Clean out the trash":'trashcan', "Take a bath":'bathtub', "Do the dishes":'sink', 
+			   "Read a book":'books', 'Do the laundry':'washing_machine'}
 
 class Level:
 	def __init__(self):
@@ -65,7 +66,7 @@ class Level:
 
 		#tasks
 		self.happy = 80
-		self.task_list = ["Talk on phone - type PHONE", "Go to balcony - type BALCONY", "Clean out the trash - type TRASH"]
+		self.task_list = good_tasks.copy()
 		self.bad_task = ""
 		self.player = Player((1980,1500),[self.visible_sprites],self.obstacle_sprites)
 		self.player.speed = (self.happy/100)*10
@@ -78,6 +79,7 @@ class Level:
 
 		self.nearest_object = None
 		self.interact_time = None
+		self.interact_wait = 4
 
 		# sprite setup
 		self.create_map()
@@ -173,10 +175,10 @@ class Level:
 				self.interact_time = None
 		
 		if self.player.done_task == 0 and self.interact_time and self.nearest_object.name == task_to_obj[self.task_list[0]]:
-			draw_loading_bar(self.display_surface, self.interact_time)
+			draw_loading_bar(self.display_surface, self.interact_time, self.interact_wait)
 		
 		if self.interact_time:
-			if time.time() - self.interact_time >= 3 and self.nearest_object.name == task_to_obj[self.task_list[0]]:
+			if time.time() - self.interact_time >= self.interact_wait and self.nearest_object.name == task_to_obj[self.task_list[0]]:
 				self.player.done_task = 1
 				self.interact_time = None
 				# print("Task done")
@@ -188,16 +190,11 @@ class Level:
 				if abs(player.rect.centerx - spr.rect.centerx) < 100 and abs(player.rect.centery - spr.rect.centery) < 100:
 					spr.active = 1
 					self.nearest_object = spr
-					# set_nearest_object(self.player, spr)
-					# print(spr)
-					# print("player's nearest obj is", spr.name)
 				else:
 					spr.active = 0
-					# self.player.nearest_obj = None
 				spr.update_image()
 	
 	def check_near_object(self, objname):
-		player = self.player
 		for sprite in self.visible_sprites.sprites():
 			if sprite.sprite_type == 'object':
 				if sprite.name == objname:
@@ -209,10 +206,8 @@ class Level:
 		self.visible_sprites.update()
 		self.input()
 		self.activate_objects() 
-		# print(self.check_near_object('chair'))
 		if(self.happy>0):
 			render_tasks(self)
-			# render_textbox(self.task_list[0], self.player.textbox_content, self)
 			self.handle_popup()
 		else:
 			show_popup(self, ["Game Over."])

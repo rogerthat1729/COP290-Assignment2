@@ -2,9 +2,10 @@ import pygame
 from random import choice
 import time
 
-good_tasks = ["Talk on phone - type PHONE", "Go to balcony - type BALCONY", "Clean out the trash - type TRASH"]
-task_to_seq = {"Talk on phone - type PHONE": "phone", "Go to balcony - type BALCONY": "balcony", "Clean out the trash - type TRASH":"trash"}
-taskobj = {"PHONE":"telephone", "BALCONY":"chair", "TRASH":"trashcan"}
+good_tasks = ["Do the laundry", "Do the dishes", "Read a book", "Take a bath", "Talk on phone", "Go to balcony", "Clean out the trash"]
+task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out the trash":"trash", "Take a bath":"bath", "Do the dishes":"sink", 
+               "Read a book":"book", 'Do the laundry':"wash"}
+# taskobj = {"PHONE":"telephone", "BALCONY":"chair", "TRASH":"trashcan", }
 
 pygame.init()
 font = pygame.font.Font(None,30)
@@ -18,12 +19,15 @@ def render_tasks(level):
     y = 20
     display_surf = level.display_surface
     happy_surf = font.render(f"Happy Index: {int(level.happy)}", True, (0, 255, 0))
-    task_rect = happy_surf.get_rect(topleft = (10, y))
-    pygame.draw.rect(display_surf,'Black',task_rect)
-    display_surf.blit(happy_surf, task_rect)
+    happy_rect = happy_surf.get_rect(topleft = (10, y))
+    pygame.draw.rect(display_surf,'Black',happy_rect)
+    display_surf.blit(happy_surf, happy_rect)
     y += 40
     for task in task_list:
-        task_surface = font.render(task, True, (255, 255, 255))
+        task_surface = font.render(task, True, (255, 0, 0))
+        task_rect = task_surface.get_rect(topleft = (10, y))
+        pygame.draw.rect(display_surf, 'white', task_rect)
+        # pygame.draw.rect(display_surf, 'black', task_rect, 1)
         display_surf.blit(task_surface, (10, y))
         y += 40
     # level.happy = max(0, level.happy-0.01)
@@ -60,6 +64,7 @@ def draw_loading_bar(screen, start_time, total_time=3):
 
     text = font.render("Task Progress", True, 'white')
     text_rect = text.get_rect(center=(bar_position[0] + bar_length / 2, bar_position[1] - 30))
+    pygame.draw.rect(screen, 'black', text_rect)
     screen.blit(text, text_rect)
 
     # Filled part of the bar
