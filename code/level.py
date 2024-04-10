@@ -171,20 +171,25 @@ class Level:
 			elif event.type == pygame.KEYDOWN and event.key == pygame.K_i:
 				if self.nearest_object and not self.interact_time:
 					self.interact_time = time.time()
+				else:
+					self.interact_time = None
 			elif event.type == pygame.KEYUP and event.key == pygame.K_i and self.interact_time:
 				self.interact_time = None
 		
-		if self.player.done_task == 0 and self.interact_time and self.nearest_object.name == task_to_obj[self.task_list[0]]:
+		if self.player.done_task == 0 and self.interact_time and self.nearest_object and self.nearest_object.name == task_to_obj[self.task_list[0]]:
 			draw_loading_bar(self.display_surface, self.interact_time, self.interact_wait)
 		
 		if self.interact_time:
-			if time.time() - self.interact_time >= self.interact_wait and self.nearest_object.name == task_to_obj[self.task_list[0]]:
+			if time.time() - self.interact_time >= self.interact_wait and self.nearest_object and self.nearest_object.name == task_to_obj[self.task_list[0]]:
 				self.player.done_task = 1
 				self.interact_time = None
 				# print("Task done")
 	
 	def activate_objects(self):
 		player = self.player
+		if self.nearest_object:
+			if abs(player.rect.centerx - self.nearest_object.rect.centerx) >= 100 or abs(player.rect.centery - self.nearest_object.rect.centery) >= 100:
+				self.nearest_object = None
 		for spr in self.visible_sprites.sprites():
 			if spr.sprite_type == 'object' and spr.name:
 				if abs(player.rect.centerx - spr.rect.centerx) < 100 and abs(player.rect.centery - spr.rect.centery) < 100:
@@ -192,6 +197,7 @@ class Level:
 					self.nearest_object = spr
 				else:
 					spr.active = 0
+				# print(self.nearest_object)
 				spr.update_image()
 	
 	def check_near_object(self, objname):
