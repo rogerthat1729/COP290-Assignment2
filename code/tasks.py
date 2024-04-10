@@ -2,7 +2,7 @@ import pygame
 from random import choice
 import time
 
-good_tasks = ["Do the laundry", "Do the dishes", "Read a book", "Take a bath", "Talk on phone", "Go to balcony", "Clean out the trash"]
+good_tasks = ["Talk on phone", "Do the laundry", "Do the dishes", "Read a book", "Take a bath", "Go to balcony", "Clean out the trash"]
 task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out the trash":"trash", "Take a bath":"bath", "Do the dishes":"sink", 
                "Read a book":"book", 'Do the laundry':"wash"}
 # taskobj = {"PHONE":"telephone", "BALCONY":"chair", "TRASH":"trashcan", }
@@ -13,6 +13,13 @@ font = pygame.font.Font(None,30)
 def play_music(task):
     pygame.mixer.music.load(f'../audio/{task}.mp3')
     pygame.mixer.music.play()
+
+def check_keypad_code(level):
+    if level.phone_keypad_content == level.correct_code:
+        level.player.done_task=1
+    else:
+        level.phone_keypad_content = ""
+
 
 def render_tasks(level):
     task_list = level.task_list
@@ -55,27 +62,38 @@ def render_tasks(level):
 #         level.player.done_task = 1
 #         level.player.is_textbox_active = False
 
-def draw_loading_bar(screen, start_time, total_time=3):
-    elapsed_time = time.time() - start_time
-    bar_length = 200
-    bar_height = 40
-    bar_position = (700, 200)
-    fill_length = (elapsed_time / total_time) * bar_length
+def display_task(screen, task, start_time, total_time=3, content=""):
+    if task=='Talk on phone':
+        keypad_image = pygame.image.load('../graphics/tasks/telephone.png')
+        keypad_rect = keypad_image.get_rect(center=(700, 400))
+        screen.blit(keypad_image, keypad_rect)
 
-    text = font.render("Task Progress", True, 'white')
-    text_rect = text.get_rect(center=(bar_position[0] + bar_length / 2, bar_position[1] - 30))
-    pygame.draw.rect(screen, 'black', text_rect)
-    screen.blit(text, text_rect)
+        # textbox_rect = pygame.Rect(700, 270, 110, 50)
+        text = font.render(content, True, 'black')
+        text_rect = text.get_rect(center=(750, 310))
+        text_surface = font.render(content, True, (0, 0, 0))
+        screen.blit(text_surface, (725, 280))
+    else:
+        elapsed_time = time.time() - start_time
+        bar_length = 200
+        bar_height = 40
+        bar_position = (700, 200)
+        fill_length = (elapsed_time / total_time) * bar_length
 
-    # Filled part of the bar
-    if fill_length > 0:
-        pygame.draw.rect(screen, 'green', (bar_position[0], bar_position[1], fill_length, bar_height))
-    # Background bar (empty)
-    pygame.draw.rect(screen, 'black', (bar_position[0], bar_position[1], bar_length, bar_height), 3)
+        text = font.render("Task Progress", True, 'white')
+        text_rect = text.get_rect(center=(bar_position[0] + bar_length / 2, bar_position[1] - 30))
+        pygame.draw.rect(screen, 'black', text_rect)
+        screen.blit(text, text_rect)
 
-    if elapsed_time >= total_time:
-        return True
-    return False
+        # Filled part of the bar
+        if fill_length > 0:
+            pygame.draw.rect(screen, 'green', (bar_position[0], bar_position[1], fill_length, bar_height))
+        # Background bar (empty)
+        pygame.draw.rect(screen, 'black', (bar_position[0], bar_position[1], bar_length, bar_height), 3)
+
+        if elapsed_time >= total_time:
+            return True
+        return False
 
 def show_popup(level, task):
     level.player.popup.text = task

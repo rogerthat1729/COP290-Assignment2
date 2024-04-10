@@ -81,6 +81,10 @@ class Level:
 		self.interact_time = None
 		self.interact_wait = 4
 
+		self.phone_keypad_content = ""
+		self.phone_keypad_active = False
+		self.correct_code = '6969'
+
 		# sprite setup
 		self.create_map()
 
@@ -159,29 +163,50 @@ class Level:
 		else:
 			self.player.direction.x = 0
 		
-		if keys[pygame.K_ESCAPE] and self.player.popup.active:
-			self.player.popup.active = False
+		if keys[pygame.K_ESCAPE]:
+			if self.player.popup.active:
+				self.player.popup.active = False
+			elif self.phone_keypad_active:
+				self.phone_keypad_active = False
+				self.phone_keypad_content = ""
+		
 		
 		for event in self.events:
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				sys.exit()
-			elif event.type == pygame.KEYDOWN and event.key == pygame.K_i:
-				if self.nearest_object and not self.interact_time:
-					self.interact_time = time.time()
-				else:
-					self.interact_time = None
+			elif event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_p:
+					if self.task_list[0]=='Talk on phone' and self.nearest_object and self.nearest_object.name == 'telephone':
+						self.phone_keypad_active = True
+				if event.key == pygame.K_i:
+					if self.nearest_object and not self.interact_time:
+						self.interact_time = time.time()
+					else:
+						self.interact_time = None
+				if self.phone_keypad_active:
+					if event.unicode.isnumeric() and len(self.phone_keypad_content) < 5:
+						self.phone_keypad_content += str(event.unicode)
+						# print(type(self.phone_keypad_content))
+					elif event.key == pygame.K_BACKSPACE:
+						self.phone_keypad_content = self.phone_keypad_content[:-1]
+					elif event.key == pygame.K_RETURN:
+						check_keypad_code(self)
 			elif event.type == pygame.KEYUP and event.key == pygame.K_i and self.interact_time:
 				self.interact_time = None
 		
-		if self.player.done_task == 0 and self.interact_time and self.nearest_object and self.nearest_object.name == task_to_obj[self.task_list[0]]:
-			draw_loading_bar(self.display_surface, self.interact_time, self.interact_wait)
+		if self.player.done_task == 0 and self.nearest_object and self.nearest_object.name == task_to_obj[self.task_list[0]] and (self.interact_time or self.phone_keypad_active):
+			# print(self.nearest_object.name)
+			display_task(self.display_surface, self.task_list[0], self.interact_time, self.interact_wait, self.phone_keypad_content)
 		
 		if self.interact_time:
-			if time.time() - self.interact_time >= self.interact_wait and self.nearest_object and self.nearest_object.name == task_to_obj[self.task_list[0]]:
-				self.player.done_task = 1
-				self.interact_time = None
-				# print("Task done")
+			if self.task_list[0] == 'Talk on phone':
+				pass
+			else:
+				if time.time() - self.interact_time >= self.interact_wait and self.nearest_object and self.nearest_object.name == task_to_obj[self.task_list[0]]:
+					self.player.done_task = 1
+					self.interact_time = None
+					# print("Task done")
 	
 	def activate_objects(self):
 		player = self.player
