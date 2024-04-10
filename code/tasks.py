@@ -74,26 +74,27 @@ def display_task(screen, task, start_time, total_time=3, content=""):
         text_surface = font.render(content, True, (0, 0, 0))
         screen.blit(text_surface, (725, 280))
     else:
-        elapsed_time = time.time() - start_time
-        bar_length = 200
-        bar_height = 40
-        bar_position = (700, 200)
-        fill_length = (elapsed_time / total_time) * bar_length
+        if start_time:
+            elapsed_time = time.time() - start_time
+            bar_length = 200
+            bar_height = 40
+            bar_position = (700, 200)
+            fill_length = (elapsed_time / total_time) * bar_length
 
-        text = font.render("Task Progress", True, 'white')
-        text_rect = text.get_rect(center=(bar_position[0] + bar_length / 2, bar_position[1] - 30))
-        pygame.draw.rect(screen, 'black', text_rect)
-        screen.blit(text, text_rect)
+            text = font.render("Task Progress", True, 'white')
+            text_rect = text.get_rect(center=(bar_position[0] + bar_length / 2, bar_position[1] - 30))
+            pygame.draw.rect(screen, 'black', text_rect)
+            screen.blit(text, text_rect)
 
-        # Filled part of the bar
-        if fill_length > 0:
-            pygame.draw.rect(screen, 'green', (bar_position[0], bar_position[1], fill_length, bar_height))
-        # Background bar (empty)
-        pygame.draw.rect(screen, 'black', (bar_position[0], bar_position[1], bar_length, bar_height), 3)
+            # Filled part of the bar
+            if fill_length > 0:
+                pygame.draw.rect(screen, 'green', (bar_position[0], bar_position[1], fill_length, bar_height))
+            # Background bar (empty)
+            pygame.draw.rect(screen, 'black', (bar_position[0], bar_position[1], bar_length, bar_height), 3)
 
-        if elapsed_time >= total_time:
-            return True
-        return False
+            if elapsed_time >= total_time:
+                return True
+            return False
 
 def show_popup(level, task):
     level.player.popup.text = task
