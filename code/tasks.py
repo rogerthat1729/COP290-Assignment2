@@ -6,9 +6,12 @@ good_tasks = ["Talk on phone", "Do the laundry", "Do the dishes", "Read a book",
 task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out the trash":"trash", "Take a bath":"bath", "Do the dishes":"sink", 
                "Read a book":"book", 'Do the laundry':"wash"}
 # taskobj = {"PHONE":"telephone", "BALCONY":"chair", "TRASH":"trashcan", }
+phone_codes = ["69420", "43210", "98543", "87658", "38961"]
 
 pygame.init()
 font = pygame.font.Font(None,30)
+keypad_font2 = pygame.font.Font(None,20)
+notes_font = pygame.font.Font(None, 40)
 
 def play_music(task):
     pygame.mixer.music.load(f'../audio/{task}.mp3')
@@ -16,7 +19,8 @@ def play_music(task):
 
 def check_keypad_code(level):
     if level.phone_keypad_content == level.correct_code:
-        level.player.done_task=1
+        level.player.done_task = 1
+        level.correct_code = choice(phone_codes)
     else:
         level.phone_keypad_content = ""
 
@@ -62,17 +66,42 @@ def render_tasks(level):
 #         level.player.done_task = 1
 #         level.player.is_textbox_active = False
 
-def display_task(screen, task, start_time, total_time=3, content=""):
+def check_for_object(list, obj):
+    for i in list:
+        if i.name == obj:
+            return True
+    return False
+
+def display_task(level, task, start_time, total_time=3, content=""):
+    screen = level.display_surface
     if task=='Talk on phone':
         keypad_image = pygame.image.load('../graphics/tasks/telephone.png')
         keypad_rect = keypad_image.get_rect(center=(700, 400))
         screen.blit(keypad_image, keypad_rect)
 
+        if len(content)==0:
+            text_surface = keypad_font2.render("Hint:", True, 'black')
+            screen.blit(text_surface, (705, 280))
+            text_surface1 = keypad_font2.render("Check the notes", True, 'black')
+            screen.blit(text_surface1, (705, 300))
         # textbox_rect = pygame.Rect(700, 270, 110, 50)
-        text = font.render(content, True, 'black')
-        text_rect = text.get_rect(center=(750, 310))
-        text_surface = font.render(content, True, (0, 0, 0))
-        screen.blit(text_surface, (725, 280))
+        else:
+            text_surface = font.render(content, True, (0, 0, 0))
+            screen.blit(text_surface, (725, 280))
+    elif task=='Check the notes':
+        notes_image = pygame.image.load('../graphics/tasks/notes.png')
+        notes_rect = notes_image.get_rect(center=(700, 400))
+        screen.blit(notes_image, notes_rect)
+
+        text = notes_font.render("Telephone code", True, 'red')
+        text_rect = text.get_rect(center=(700, 350))
+        # bg_rect = text_rect.copy()
+        # pygame.draw.rect(screen, 'white', bg_rect)
+        screen.blit(text, text_rect)
+
+        code = notes_font.render(f"{level.correct_code}", True, 'green')
+        code_rect = code.get_rect(center=(700, 400))
+        screen.blit(code, code_rect)
     else:
         if start_time:
             elapsed_time = time.time() - start_time
