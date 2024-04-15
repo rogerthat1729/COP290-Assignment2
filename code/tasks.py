@@ -141,6 +141,14 @@ def display_task(level, task, start_time, total_time=3, content=""):
                     sink_image = sink_animations[frame_index]
                     sink_rect = sink_image.get_rect(center=(800, 400))
                     screen.blit(sink_image, sink_rect)
+            elif task=='Do the laundry':
+                wm_animations = import_folder('../graphics/tasks/washing_machine')
+                frame_index = int((elapsed_time/total_time)*2.999)
+
+                if(frame_index<3):
+                    wm_image = wm_animations[frame_index]
+                    wm_rect = wm_image.get_rect(center=(800, 450))
+                    screen.blit(wm_image, wm_rect)
 
             if elapsed_time >= total_time:
                 return True
