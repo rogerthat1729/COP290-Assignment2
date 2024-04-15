@@ -19,6 +19,7 @@ class Player(pygame.sprite.Sprite):
 
 		self.import_player_assets()
 		self.sprite_type = 'player'
+		self.show_player = True
 		self.status = 'down'
 		self.frame_index = 0
 		self.animation_speed = 0.15

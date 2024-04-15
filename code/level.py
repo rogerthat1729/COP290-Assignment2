@@ -11,7 +11,7 @@ import sys
 import time
 
 index_to_name = {1419:'chair', 1389:'trashcan', 1357:'telephone', 1485:'bathtub', 1386:'sink', 1390:'books', 
-				 1391:'notes', 1480:'washing_machine'}
+				 1391:'notes', 1480:'washing_machine', 1742:'door'}
 
 def create_radial_gradient(width, height, inner_color, outer_color):
     surface = pygame.Surface((width, height), pygame.SRCALPHA)
@@ -53,7 +53,7 @@ bad_tasks = {1:["You browsed through social media for 2 hours.",  "Your mental h
 				5: ["You stayed in bed all day and didn't talk to anyone", "Your mental health is reduced by 20 points"]}
 happiness_reduced = {1:10, 2:10, 3:15, 4:15, 5:20}
 task_to_obj = {"Talk on phone":'telephone', "Go to balcony":'chair', "Clean out the trash":'trashcan', "Take a bath":'bathtub', "Do the dishes":'sink', 
-			   "Read a book":'books', 'Do the laundry':'washing_machine'}
+			   "Read a book":'books', 'Do the laundry':'washing_machine', "Buy groceries":'door'}
 
 class Level:
 	def __init__(self):
@@ -67,23 +67,24 @@ class Level:
 		self.obstacle_sprites = pygame.sprite.Group()
 
 		#tasks
-		self.play = True
 		self.happy = 50
 		self.task_list = good_tasks.copy()
 		self.bad_task = ""
 		self.player = Player((1980,1500),[self.visible_sprites],self.obstacle_sprites)
+		self.show_player = True
 		self.player.speed = 5 + (self.happy/100)*5
 		self.player.vis_sprites = self.visible_sprites
 
 		self.brightness_wait = 0
 		self.pop_up_wait = 0
-		self.bad_task_wait = 600
+		self.bad_task_wait = 10000
 		
 		self.events = []
 
 		self.nearest_object = []
 		self.interact_time = None
 		self.interact_wait = 4
+		self.playing_music = False
 
 		self.phone_keypad_content = ""
 		self.phone_keypad_active = False
@@ -188,6 +189,8 @@ class Level:
 				if event.key == pygame.K_i:
 					if check_for_object(self.nearest_object, task_to_obj[self.task_list[0]]) and not self.interact_time:
 						self.interact_time = time.time()
+						if not self.playing_music:
+							self.playing_music = True
 					else:
 						self.interact_time = None
 				else:
@@ -207,8 +210,14 @@ class Level:
 		
 		if self.player.done_task == 0 and check_for_object(self.nearest_object, task_to_obj[self.task_list[0]]) and (self.interact_time or self.phone_keypad_active):
 			display_task(self, self.task_list[0], self.interact_time, self.interact_wait, self.phone_keypad_content)
+			if self.task_list[0]=='Buy groceries':
+				self.player.show_player = False
+			if self.playing_music:
+				play_music(task_to_seq[self.task_list[0]])
+				self.playing_music = False
 		else:
 			self.interact_time = None
+			self.player.show_player = True
 		
 		if self.interact_time:
 			if self.task_list[0] == 'Talk on phone':
@@ -217,6 +226,9 @@ class Level:
 				if time.time() - self.interact_time >= self.interact_wait and check_for_object(self.nearest_object, task_to_obj[self.task_list[0]]):
 					self.player.done_task = 1
 					self.interact_time = None
+		else:
+			pygame.mixer.music.stop()
+			
 	
 	def activate_objects(self):
 		player = self.player
@@ -282,5 +294,8 @@ class YSortCameraGroup(pygame.sprite.Group):
 
 		# for sprite in self.sprites():
 		for sprite in sorted(self.sprites(),key = lambda sprite: sprite.rect.centery):
-			offset_pos = sprite.rect.topleft - self.offset
-			self.display_surface.blit(sprite.image,offset_pos)
+			if(sprite.sprite_type=='player' and (not player.show_player)):
+				pass
+			else:
+				offset_pos = sprite.rect.topleft - self.offset
+				self.display_surface.blit(sprite.image,offset_pos)
