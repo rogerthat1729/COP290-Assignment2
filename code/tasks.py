@@ -24,21 +24,37 @@ def check_keypad_code(level):
     else:
         level.phone_keypad_content = ""
 
+def draw_health_bar(level):
+    screen = level.display_surface
+    y = 20
+    happy_surf = font.render(f"Mental Health: {level.happy}", True, 'white')
+    happy_rect = happy_surf.get_rect(topleft = (10, y))
+    screen.blit(happy_surf, happy_rect)
+    y += 30
+    bar_length = 150
+    bar_height = 20
+    bar_position = (10, y)
+    fill_length = (level.happy / 100) * bar_length
+    color = (255, 0, 0)
+    if(level.happy > 50):
+        color = (255*((100-level.happy)/50),255, 0)
+    else:
+        color = (255, 255*(level.happy/50), 0)
+    if fill_length > 0:
+        pygame.draw.rect(screen, color, (bar_position[0], bar_position[1], fill_length, bar_height))
+    pygame.draw.rect(screen, 'black', (bar_position[0], bar_position[1], bar_length, bar_height), 3)
+
 
 def render_tasks(level):
     task_list = level.task_list
-    y = 20
+    y = 80
     display_surf = level.display_surface
-    happy_surf = font.render(f"Happy Index: {int(level.happy)}", True, (0, 255, 0))
-    happy_rect = happy_surf.get_rect(topleft = (10, y))
-    pygame.draw.rect(display_surf,'Black',happy_rect)
-    display_surf.blit(happy_surf, happy_rect)
-    y += 40
+    background_surface = pygame.Surface((200, 350), pygame.SRCALPHA)
+    background_surface.fill((0, 0, 0, 64))
+    display_surf.blit(background_surface, (10, 10))
+    draw_health_bar(level)
     for task in task_list:
-        task_surface = font.render(task, True, (255, 0, 0))
-        task_rect = task_surface.get_rect(topleft = (10, y))
-        pygame.draw.rect(display_surf, 'white', task_rect)
-        # pygame.draw.rect(display_surf, 'black', task_rect, 1)
+        task_surface = font.render(task, True, 'green')
         display_surf.blit(task_surface, (10, y))
         y += 40
     # level.happy = max(0, level.happy-0.01)
@@ -84,7 +100,6 @@ def display_task(level, task, start_time, total_time=3, content=""):
             screen.blit(text_surface, (705, 280))
             text_surface1 = keypad_font2.render("Check the notes", True, 'black')
             screen.blit(text_surface1, (705, 300))
-        # textbox_rect = pygame.Rect(700, 270, 110, 50)
         else:
             text_surface = font.render(content, True, (0, 0, 0))
             screen.blit(text_surface, (725, 280))
@@ -95,8 +110,6 @@ def display_task(level, task, start_time, total_time=3, content=""):
 
         text = notes_font.render("Telephone code", True, 'red')
         text_rect = text.get_rect(center=(700, 350))
-        # bg_rect = text_rect.copy()
-        # pygame.draw.rect(screen, 'white', bg_rect)
         screen.blit(text, text_rect)
 
         code = notes_font.render(f"{level.correct_code}", True, 'green')
@@ -115,10 +128,8 @@ def display_task(level, task, start_time, total_time=3, content=""):
             pygame.draw.rect(screen, 'black', text_rect)
             screen.blit(text, text_rect)
 
-            # Filled part of the bar
             if fill_length > 0:
                 pygame.draw.rect(screen, 'green', (bar_position[0], bar_position[1], fill_length, bar_height))
-            # Background bar (empty)
             pygame.draw.rect(screen, 'black', (bar_position[0], bar_position[1], bar_length, bar_height), 3)
 
             if elapsed_time >= total_time:

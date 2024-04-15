@@ -3,11 +3,6 @@ from settings import *
 from level import Level
 pygame.init()
 
-# Screen dimensions
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
-
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -24,11 +19,11 @@ class StartScreen:
 
         for i, option in enumerate(self.options):
             text = font.render(option, True, WHITE)
-            text_rect = text.get_rect(center=(SCREEN_WIDTH / 2, 200 + i * 50))
+            text_rect = text.get_rect(center=(WIDTH / 2, 200 + i * 50))
             screen.blit(text, text_rect)
 
-        selected_rect = pygame.Rect(0, 0, SCREEN_WIDTH, 50)
-        selected_rect.center = (SCREEN_WIDTH / 2, 200 + self.selected_option * 50)
+        selected_rect = pygame.Rect(0, 0, WIDTH, 50)
+        selected_rect.center = (WIDTH / 2, 200 + self.selected_option * 50)
         pygame.draw.rect(screen, WHITE, selected_rect, 3)
 
     def handle_event(self, event):
@@ -48,9 +43,9 @@ class IntroScreen:
     def __init__(self, text, image_path, char_delay=20):
         self.full_text = text
         self.image = pygame.image.load(image_path)  # Load your image here
-        self.image_rect = self.image.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+        self.image_rect = self.image.get_rect(center=(WIDTH / 2, HEIGHT / 2))
         self.rendered_text = ""
-        self.rendered_text_rect = pygame.Rect(50, SCREEN_HEIGHT - 100, SCREEN_WIDTH - 100, 50)  # Adjust position and size as needed
+        self.rendered_text_rect = pygame.Rect(50, HEIGHT - 100, WIDTH - 100, 50)
         self.rendered_chars = 0
         self.char_delay = char_delay
         self.last_char_render_time = 0
@@ -77,6 +72,7 @@ class IntroScreen:
             if event.key == pygame.K_RIGHT:
                 return True
         return False
+    
 class Game:
 	def __init__(self):
 		pygame.init()
@@ -99,7 +95,7 @@ class Game:
 			self.clock.tick(FPS)
 
 def main():
-    screen = pygame.display.set_mode(SCREEN_SIZE, pygame.FULLSCREEN)  # Set fullscreen mode
+    screen = pygame.display.set_mode(SCREEN_SIZE)
     pygame.display.set_caption("Intro")
 
     clock = pygame.time.Clock()
@@ -143,8 +139,10 @@ def main():
         pygame.display.flip()
         clock.tick(60)
 
-    game = Game()
-    game.run()
+    if(current_screen_index==10):
+        game = Game()
+        game.run()
     sys.exit()
+
 if __name__ == "__main__":
     main()    
