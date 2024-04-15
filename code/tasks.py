@@ -8,6 +8,8 @@ task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out 
                "Read a book":"book", 'Do the laundry':"wash"}
 # taskobj = {"PHONE":"telephone", "BALCONY":"chair", "TRASH":"trashcan", }
 phone_codes = ["69420", "43210", "98543", "87658", "38961"]
+task_to_points = {"Talk on phone": 5, "Go to balcony": 10, "Clean out the trash": 5, "Take a bath": 10, "Do the dishes": 15, 
+                    "Read a book": 10, 'Do the laundry': 15}
 
 pygame.init()
 font = pygame.font.Font(None,30)
@@ -62,9 +64,12 @@ def render_tasks(level):
     if level.player.done_task==1:
         play_music(task_to_seq[task_list[0]])
         level.player.textbox_content = ""
+        level.happy = min(100, level.happy+task_to_points[task_list[0]])
+        curr_task = level.task_list[0]
         level.task_list.pop(0)
+        good_tasks.remove(task_list[0])
         level.task_list.append(choice(good_tasks))
-        level.happy = min(100, level.happy+10)
+        good_tasks.append(curr_task)
         level.player.done_task = 0
 
 # def render_textbox(task, content, level):
