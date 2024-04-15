@@ -52,7 +52,7 @@ class IntroScreen:
 
     def render(self, screen):
         screen.fill(BLACK)
-        font = pygame.font.Font(None, 36)
+        font = pygame.font.Font(None, 24)  # Decrease font size to 24 (or adjust as needed)
 
         # Render text at the bottom, gradually typing out
         if pygame.time.get_ticks() - self.last_char_render_time > self.char_delay:
@@ -102,14 +102,14 @@ def main():
 
     # Create instances of each screen
     start_screen = StartScreen()
-    intro_screen1 = IntroScreen("Susan had always been a bright and cheerful young woman, filled with big dreams and a zest for life.", "../graphics/intro/girl.png")
+    intro_screen1 = IntroScreen("Susan had always been a bright and cheerful young woman, filled with a zest for life.", "../graphics/intro/girl.png")
     intro_screen2 = IntroScreen("Growing up, she was the light of her family, bringing joy and laughter wherever she went.", "../graphics/intro/family.png")
-    intro_screen3 = IntroScreen("However, Susan's world came crashing down two weeks ago when her beloved older brother, Ethan, passed away in a tragic car accident.", "../graphics/intro/crash.png")
+    intro_screen3 = IntroScreen("However,her world came crashing down when her brother, Ethan, passed away in a car accident.", "../graphics/intro/crash.png")
     intro_screen4 = IntroScreen("Ethan had been Susan's closest confidant, her partner in crime, and her rock.", "../graphics/intro/brother.png")
     intro_screen5 = IntroScreen("...", "../graphics/intro/flowers.png")
-    intro_screen6 = IntroScreen("Since that fateful day, Susan has struggled to find her footing. The grief has consumed her, leaving her withdrawn, listless, and plagued by feelings of profound sadness and hopelessness.", "../graphics/intro/sad.png")  
-    intro_screen7 = IntroScreen("She has isolated herself from friends and family, unable to find the strength to engage with the world around her.", "../graphics/intro/sad2.png") 
-    intro_screen8 = IntroScreen("The darkness and despair have become almost unbearable for Susan. Wracked with grief and guilt, she has reached a point where she can no longer see a way forward. In a moment of utter hopelessness, she attempted to take her own life, ", "../graphics/intro/rope.png")
+    intro_screen6 = IntroScreen("Susan has struggled to find her footing. The grief has consumed her, leaving her hopeless.", "../graphics/intro/sad.png")  
+    intro_screen7 = IntroScreen("She has isolated herself from everyone, unable to find the strength to engage with the world around her.", "../graphics/intro/sad2.png") 
+    intro_screen8 = IntroScreen("The darkness and despair had become unbearable for Susan. She attempted to take her own life, ", "../graphics/intro/rope.png")
     intro_screen9 = IntroScreen("But fate had other plans for Susan. The rope she had fashioned was not properly secured, and Susan found herself struggling for breath but still alive. As she lay on the floor, gasping for air, her eyes landed on a framed photograph of her beloved brother Ethan. Seeing his warm smile and kind eyes seemed to cut through the fog of her depression, igniting a glimmer of hope within her.", "../graphics/intro/hope.png")
     screens = [start_screen, intro_screen1, intro_screen2, intro_screen3, intro_screen4,intro_screen5,intro_screen6,intro_screen7,intro_screen8,intro_screen9]
 
