@@ -17,6 +17,7 @@ class StartScreen:
     def __init__(self):
         self.options = ["Start", "Settings"]
         self.selected_option = 0
+        self.option_rects = []  # Store the rects for each option for mouse click detection
 
     def render(self, screen):
         screen.fill(BLACK)
@@ -26,23 +27,25 @@ class StartScreen:
             text = font.render(option, True, WHITE)
             text_rect = text.get_rect(center=(SCREEN_WIDTH / 2, 200 + i * 50))
             screen.blit(text, text_rect)
+            self.option_rects.append(text_rect)  # Store the rect for each option
 
         selected_rect = pygame.Rect(0, 0, SCREEN_WIDTH, 50)
         selected_rect.center = (SCREEN_WIDTH / 2, 200 + self.selected_option * 50)
         pygame.draw.rect(screen, WHITE, selected_rect, 3)
 
     def handle_event(self, event):
-        if event.type == pygame.KEYDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN:  # Check for mouse click
+            mouse_pos = pygame.mouse.get_pos()
+            for i, option_rect in enumerate(self.option_rects):
+                if option_rect.collidepoint(mouse_pos):
+                    return self.options[i].lower()  # Return the lowercase option clicked
+        elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_DOWN:
                 self.selected_option = (self.selected_option + 1) % len(self.options)
             elif event.key == pygame.K_UP:
                 self.selected_option = (self.selected_option - 1) % len(self.options)
-            elif event.key == pygame.K_RETURN:
-                if self.selected_option == 0:
-                    return "start"
-                elif self.selected_option == 1:
-                    return "settings"
         return None
+
 
 class IntroScreen:
     def __init__(self, text, image_path, char_delay=20):
@@ -80,25 +83,25 @@ class IntroScreen:
 
    
 class Game:
-	def __init__(self):
-		pygame.init()
-		self.screen = pygame.display.set_mode((WIDTH,HEIGHT), pygame.DOUBLEBUF)
-		pygame.display.set_caption('Dempression')
-		self.clock = pygame.time.Clock()
+    def __init__(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode(SCREEN_SIZE, pygame.FULLSCREEN)  # Set fullscreen mode
+        pygame.display.set_caption('Dempression')
+        self.clock = pygame.time.Clock()
 
-		self.level = Level()
-	
-	def run(self):
-		while True:
-			self.level.events = pygame.event.get()
-			for event in pygame.event.get():
-				if event.type == pygame.QUIT:
-					pygame.quit()
-					sys.exit()
-			self.screen.fill('black')
-			self.level.run()
-			pygame.display.flip()
-			self.clock.tick(FPS)
+        self.level = Level()
+
+    def run(self):
+        while True:
+            self.level.events = pygame.event.get()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+            self.screen.fill('black')
+            self.level.run()
+            pygame.display.flip()
+            self.clock.tick(FPS)
 
 def main():
     screen = pygame.display.set_mode(SCREEN_SIZE, pygame.FULLSCREEN)  # Set fullscreen mode
