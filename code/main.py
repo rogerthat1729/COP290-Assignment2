@@ -79,7 +79,7 @@ class IntroScreen:
 class Game:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode(SCREEN_SIZE, pygame.FULLSCREEN)  # Set fullscreen mode
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF)  # Set fullscreen mode
         pygame.display.set_caption('Dempression')
         self.clock = pygame.time.Clock()
 

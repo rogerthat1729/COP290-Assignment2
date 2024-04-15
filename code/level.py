@@ -74,7 +74,7 @@ class Level:
 
 		self.brightness_wait = 0
 		self.pop_up_wait = 0
-		self.bad_task_wait = 300
+		self.bad_task_wait = 1300
 		
 		self.events = []
 
@@ -87,6 +87,8 @@ class Level:
 		self.correct_code = '69420'
 
 		self.notes_active = False
+
+		# self.sink_active = False
 
 		# sprite setup
 		self.create_map()
@@ -174,6 +176,8 @@ class Level:
 				self.phone_keypad_content = ""
 			elif self.notes_active:
 				self.notes_active = False
+			# elif self.sink_active:
+			# 	self.sink_active = False
 		
 		
 		for event in self.events:
@@ -182,10 +186,12 @@ class Level:
 				sys.exit()
 			elif event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_p:
-					if self.task_list[0]=='Talk on phone' and check_for_object(self.nearest_object, 'telephone'):
+					if self.task_list[0]=='Talk on phone' and check_for_object(self.nearest_object, 'telephone') and not self.phone_keypad_active:
 						self.phone_keypad_active = True
 					elif check_for_object(self.nearest_object, 'notes') and not self.notes_active:
 						self.notes_active = True
+					# elif self.task_list[0]=='Do the dishes' and check_for_object(self.nearest_object, 'sink') and not self.sink_active:
+					# 	self.sink_active = True
 				if event.key == pygame.K_i:
 					if len(self.nearest_object) and not self.interact_time:
 						self.interact_time = time.time()
@@ -204,6 +210,8 @@ class Level:
 		
 		if self.notes_active:
 			display_task(self, 'Check the notes', None)
+		# elif self.sink_active:
+		# 	display_task(self, 'Do the dishes', None)
 		
 		if self.player.done_task == 0 and check_for_object(self.nearest_object, task_to_obj[self.task_list[0]]) and (self.interact_time or self.phone_keypad_active):
 			# print(self.nearest_object.name)

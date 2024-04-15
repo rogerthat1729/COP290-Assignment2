@@ -1,8 +1,9 @@
 import pygame
 from random import choice
 import time
+from support import *
 
-good_tasks = ["Talk on phone", "Do the laundry", "Do the dishes", "Read a book", "Take a bath", "Go to balcony", "Clean out the trash"]
+good_tasks = ["Do the dishes", "Talk on phone", "Do the laundry", "Read a book", "Take a bath", "Go to balcony", "Clean out the trash"]
 task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out the trash":"trash", "Take a bath":"bath", "Do the dishes":"sink", 
                "Read a book":"book", 'Do the laundry':"wash"}
 # taskobj = {"PHONE":"telephone", "BALCONY":"chair", "TRASH":"trashcan", }
@@ -131,6 +132,15 @@ def display_task(level, task, start_time, total_time=3, content=""):
             if fill_length > 0:
                 pygame.draw.rect(screen, 'green', (bar_position[0], bar_position[1], fill_length, bar_height))
             pygame.draw.rect(screen, 'black', (bar_position[0], bar_position[1], bar_length, bar_height), 3)
+        
+            if task=='Do the dishes':
+                sink_animations = import_folder('../graphics/tasks/sink')
+                frame_index = int((elapsed_time/total_time)*4.999)
+
+                if(frame_index<5):
+                    sink_image = sink_animations[frame_index]
+                    sink_rect = sink_image.get_rect(center=(800, 400))
+                    screen.blit(sink_image, sink_rect)
 
             if elapsed_time >= total_time:
                 return True
