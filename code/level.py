@@ -74,6 +74,7 @@ class Level:
 
 		self.brightness_wait = 0
 		self.pop_up_wait = 0
+		self.bad_task_wait = 300
 		
 		self.events = []
 
@@ -133,7 +134,7 @@ class Level:
 		pygame.display.flip()
 	
 	def handle_popup(self):
-		if self.pop_up_wait >= 600 and not self.interact_time:
+		if self.pop_up_wait >= self.bad_task_wait and not self.interact_time:
 			bad_task_index = choice(list(bad_tasks.keys()))
 			self.bad_task = bad_tasks[bad_task_index]
 			self.pop_up_wait = 0
@@ -249,7 +250,7 @@ class Level:
 			self.handle_popup()
 		else:
 			show_popup(self, ["Game Over."])
-		self.update_brightness()
+		# self.update_brightness()
 
 class YSortCameraGroup(pygame.sprite.Group):
 	def __init__(self):
