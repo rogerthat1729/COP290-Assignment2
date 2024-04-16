@@ -148,24 +148,31 @@ class Level:
  
 	def input(self):
 		keys = pygame.key.get_pressed()
+		bothchecker=0
 		if keys[pygame.K_w]:
 			self.player.direction.y = -1
 			self.player.status = 'up'
+			bothchecker+=1
 		elif keys[pygame.K_s]:
 			self.player.direction.y = 1
 			self.player.status = 'down'
+			bothchecker+=1
 		else:
 			self.player.direction.y = 0
 
 		if keys[pygame.K_d]:
 			self.player.direction.x = 1
 			self.player.status = 'right'
+			bothchecker+=1
 		elif keys[pygame.K_a]:
 			self.player.direction.x = -1
 			self.player.status = 'left'
+			bothchecker+=1
 		else:
 			self.player.direction.x = 0
-		
+		if bothchecker==2:
+			self.player.direction.x/=2
+			self.player.direction.y/=2
 		if keys[pygame.K_ESCAPE]:
 			if self.player.popup.active:
 				self.player.popup.active = False
