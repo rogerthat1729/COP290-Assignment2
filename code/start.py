@@ -120,6 +120,7 @@ class SettingsMenu(Menu):
         self.game_volume = 50  # Default volume
         self.slider_positions = {'music': (750, 150), 'game': (750, 250)}
         self.sliders = {'music': pygame.Rect(750, 150, 200, 20), 'game': pygame.Rect(750, 250, 200, 20)}
+        self.back_rect = pygame.Rect(700, 350, 100, 50) 
 
     def draw(self, surface):
         # Draw each slider
@@ -132,8 +133,7 @@ class SettingsMenu(Menu):
             pygame.draw.rect(surface, WHITE, (rect.x, rect.y, self.music_volume if key == 'music' else self.game_volume, rect.height))  # The volume level
 
         # Draw back button
-        back_button = pygame.Rect(700, 350, 100, 50)
-        draw_button("Back", back_button, GRAY, surface)
+        draw_button("Back", self.back_rect, GRAY, surface)
     
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -147,8 +147,7 @@ class SettingsMenu(Menu):
                         self.game_volume = pos[0] - rect.x
 
             # Check if the back button is clicked
-            back_button = pygame.Rect(100, 350, 100, 50)
-            if back_button.collidepoint(pos):
+            if self.back_rect.collidepoint(pos):
                 return "menu"
         return "settings"  # Assuming the game class can manage which menu is active
 
