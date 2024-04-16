@@ -7,7 +7,6 @@ good_tasks = ["Take a nap", "Buy groceries", "Clean out the trash", "Do the dish
               "Read a book", "Take a bath", "Go to balcony"]
 task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out the trash":"trash", "Take a bath":"bath", "Do the dishes":"sink", 
                "Read a book":"book", 'Do the laundry':"wash", "Buy groceries":'door', "Take a nap":"bed"}
-# taskobj = {"PHONE":"telephone", "BALCONY":"chair", "TRASH":"trashcan", }
 phone_codes = ["69420", "43210", "98543", "87658", "38961"]
 task_to_points = {"Talk on phone": 5, "Go to balcony": 10, "Clean out the trash": 5, "Take a bath": 10, "Do the dishes": 15, 
                     "Read a book": 10, 'Do the laundry': 15, 'Buy groceries':10, "Take a nap": 10}
@@ -16,6 +15,12 @@ pygame.init()
 font = pygame.font.Font('../graphics/font/joystix.ttf',15)
 keypad_font2 = pygame.font.Font(None,20)
 notes_font = pygame.font.Font(None, 40)
+
+def fade_to_black(level):
+    overlay = pygame.Surface(level.display_surface.get_size(), pygame.SRCALPHA)
+    color = int(((time.time() - level.interact_time)/level.interact_wait)*255)
+    overlay.fill((0, 0, 0, color))  # Semi-transparent black
+    level.display_surface.blit(overlay, (0, 0))
 
 def draw_pause_screen(level):
     screen = level.display_surface
@@ -32,9 +37,6 @@ def draw_pause_button(level):
     screen = level.display_surface
     if level.paused:
         draw_pause_screen(level)
-        # overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
-        # overlay.fill((0, 0, 0, 128))  # Semi-transparent black
-        # screen.blit(overlay, (0, 0))
         pause_text = font.render("Paused.", True, 'white')
         screen.blit(pause_text, (1500, 100))
 

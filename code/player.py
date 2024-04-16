@@ -16,6 +16,8 @@ class Player(pygame.sprite.Sprite):
 		self.image = pygame.image.load('../graphics/test/player.png').convert_alpha()
 		self.rect = self.image.get_rect(topleft = pos)
 		self.hitbox = self.rect.inflate(0,-26)
+		self.speed = 10
+		self.character = 'Susan'
 
 		self.import_player_assets()
 		self.sprite_type = 'player'

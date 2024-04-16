@@ -55,9 +55,10 @@ happiness_reduced = {1:10, 2:10, 3:15, 4:15, 5:20}
 task_to_obj = {"Talk on phone":'telephone', "Go to balcony":'chair', "Clean out the trash":'trashcan', "Take a bath":'bathtub', "Do the dishes":'sink', 
 			   "Read a book":'books', 'Do the laundry':'washing_machine', "Buy groceries":'door', 'Take a nap':'bed'}
 
-class Level:
-	def __init__(self):
+difficulty_to_bad_task_wait = {'Easy':900, 'Medium':600, 'Hard':300}
 
+class Level:
+	def __init__(self, character, difficulty):
 		# get the display surface 
 		self.display_surface = pygame.display.get_surface()
 		self.overlay = pygame.Surface(self.display_surface.get_size(), pygame.SRCALPHA)
@@ -65,7 +66,7 @@ class Level:
 		# sprite group setup
 		self.visible_sprites = YSortCameraGroup()
 		self.obstacle_sprites = pygame.sprite.Group()
-
+		
 		#tasks
 		self.happy = 50
 		self.task_list = good_tasks.copy()
@@ -73,11 +74,11 @@ class Level:
 		self.player = Player((1980,1500),[self.visible_sprites],self.obstacle_sprites)
 		self.show_player = True
 		self.player.speed = 5 + (self.happy/100)*5
-		self.player.vis_sprites = self.visible_sprites
+		self.player.character = character
 
 		self.brightness_wait = 0
 		self.pop_up_wait = 0
-		self.bad_task_wait = 300
+		self.bad_task_wait = difficulty_to_bad_task_wait[difficulty]
 		
 		self.events = []
 
@@ -236,6 +237,7 @@ class Level:
 				self.player.show_player = False
 			elif self.task_list[0]=='Take a nap':
 				self.player.show_player = False
+				fade_to_black(self)
 				change_to_task_image(self, 'bed')
 			if self.playing_music:
 				play_music(task_to_seq[self.task_list[0]])
