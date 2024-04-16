@@ -77,7 +77,7 @@ class Level:
 
 		self.brightness_wait = 0
 		self.pop_up_wait = 0
-		self.bad_task_wait = 600
+		self.bad_task_wait = 200
 		
 		self.events = []
 

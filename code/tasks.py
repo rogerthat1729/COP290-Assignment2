@@ -13,7 +13,7 @@ task_to_points = {"Talk on phone": 5, "Go to balcony": 10, "Clean out the trash"
                     "Read a book": 10, 'Do the laundry': 15, 'Buy groceries':10, "Take a nap": 10}
 
 pygame.init()
-font = pygame.font.Font(None,30)
+font = pygame.font.Font('../graphics/font/joystix.ttf',15)
 keypad_font2 = pygame.font.Font(None,20)
 notes_font = pygame.font.Font(None, 40)
 
@@ -36,7 +36,7 @@ def draw_pause_button(level):
         # overlay.fill((0, 0, 0, 128))  # Semi-transparent black
         # screen.blit(overlay, (0, 0))
         pause_text = font.render("Paused.", True, 'white')
-        screen.blit(pause_text, (1500, 80))
+        screen.blit(pause_text, (1500, 100))
 
     pause_image = pygame.image.load('../graphics/ui/pause.png')
     pause_rect = pause_image.get_rect(center=(1550, 50))
@@ -87,7 +87,7 @@ def render_tasks(level):
     task_list = level.task_list
     y = 80
     display_surf = level.display_surface
-    background_surface = pygame.Surface((200, 400), pygame.SRCALPHA)
+    background_surface = pygame.Surface((250, 450), pygame.SRCALPHA)
     background_surface.fill((0, 0, 0, 64))
     display_surf.blit(background_surface, (10, 10))
     draw_health_bar(level)
@@ -197,34 +197,44 @@ def display_task(level, task, start_time, total_time=3, content=""):
             return False
         
 def show_popup(level, task):
-    level.player.popup.text = task
-    level.player.popup.show(level.display_surface)
+    level.player.popup.show(task, level.display_surface)
 
 class Popup:
-    def __init__(self, text, width=300, height=100):
+    def __init__(self, text, width=100, height=20):
         self.text = text
-        self.width = width
-        self.height = height
-        self.font = pygame.font.Font(None, 36)
+        self.font = pygame.font.Font('../graphics/font/merchant.ttf', 36)
         self.active = False
 
-    def show(self, screen):
+    def show(self, text, screen):
         if not self.active:
             return
+        
+        width = 0
+        height = 0
 
-        x = (screen.get_width() - self.width) // 2
-        y = (screen.get_height() - self.height) // 2
-
-        popup_rect = pygame.Rect(x, y, self.width, self.height)
-        pygame.draw.rect(screen, (255, 255, 255), popup_rect)
-        border = popup_rect.copy()
-        pygame.draw.rect(screen, (0, 0, 0), border, 3)
-
-        y_offset = 5
+        self.text = text
         for line in self.text:
-            line_surface = font.render(line, True, 'black')
-            screen.blit(line_surface, (x, y+y_offset))
-            y_offset += font.get_linesize()
+            line_surface = self.font.render(line, True, 'black')
+            line_width, line_height = line_surface.get_size()
+            width = max(width, line_width)
+            height += line_height
+        width += 20
+        height += 20
+
+        x = 800 - width // 2
+        y = 440 - height // 2
+
+        popup_rect = pygame.Rect(x, y, width, height)
+        pygame.draw.rect(screen, 'white', popup_rect)
+        border = popup_rect.copy()
+        pygame.draw.rect(screen, 'black', border, 3)
+
+        y += 10
+        for line in self.text:
+            line_surface = self.font.render(line, True, 'black')
+            screen.blit(line_surface, (x+10, y))
+            y += line_surface.get_size()[1]
+        
 
     def toggle(self):
         self.active = not self.active
