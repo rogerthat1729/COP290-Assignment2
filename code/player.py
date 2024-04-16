@@ -13,7 +13,9 @@ task_to_seq = {"Talk on phone": [pygame.K_p, pygame.K_h, pygame.K_o, pygame.K_n,
 class Player(pygame.sprite.Sprite):
 	def __init__(self,pos,groups,obstacle_sprites, character):
 		super().__init__(groups)
-		self.image = pygame.image.load('../graphics/test/player1.png').convert_alpha()
+		self.image = pygame.image.load('../graphics/player1/down_idle/idle_down.png').convert_alpha()
+		if character == 'character2':
+			self.image = pygame.image.load('../graphics/player2/down_idle/idle_down.png').convert_alpha()
 		self.rect = self.image.get_rect(topleft = pos)
 		self.hitbox = self.rect.inflate(0,-26)
 		self.speed = 10
