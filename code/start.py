@@ -53,7 +53,7 @@ class Menu:
 class StartMenu(Menu):
     def __init__(self):
         self.character_images = [pygame.image.load('../graphics/player1/down_idle/idle_down.png'), pygame.image.load('../graphics/player2/down_idle/idle_down.png')]
-        self.characters = ['Character 1', 'Character 2']
+        self.characters = ['character1', 'character2']
         self.difficulties = ['Easy', 'Medium', 'Hard']
         self.selected_character = 0
         self.selected_difficulty = 0
