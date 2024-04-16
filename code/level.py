@@ -92,6 +92,9 @@ class Level:
 
 		self.notes_active = False
 
+		self.pause_rect = pygame.Rect(1550, 50, 100, 100)
+		self.paused = False
+
 		# sprite setup
 		self.create_map()
 
@@ -141,77 +144,89 @@ class Level:
 			self.pop_up_wait = 0
 			self.player.popup.active = True
 			self.happy = max(0, self.happy-happiness_reduced[bad_task_index])
-		elif (not self.player.popup.active) and (not self.interact_time):
+		elif (not self.player.popup.active) and (not self.interact_time) and (not self.paused):
 			self.pop_up_wait += 1
 		if self.player.popup.active:
 			show_popup(self, self.bad_task)
  
 	def input(self):
+		# print(self.paused)
+		draw_pause_button(self)
 		keys = pygame.key.get_pressed()
 		bothchecker=0
-		if keys[pygame.K_w]:
-			self.player.direction.y = -1
-			self.player.status = 'up'
-			bothchecker+=1
-		elif keys[pygame.K_s]:
-			self.player.direction.y = 1
-			self.player.status = 'down'
-			bothchecker+=1
-		else:
-			self.player.direction.y = 0
+		if(not self.paused):
+			if keys[pygame.K_w]:
+				self.player.direction.y = -1
+				self.player.status = 'up'
+				bothchecker+=1
+			elif keys[pygame.K_s]:
+				self.player.direction.y = 1
+				self.player.status = 'down'
+				bothchecker+=1
+			else:
+				self.player.direction.y = 0
 
-		if keys[pygame.K_d]:
-			self.player.direction.x = 1
-			self.player.status = 'right'
-			bothchecker+=1
-		elif keys[pygame.K_a]:
-			self.player.direction.x = -1
-			self.player.status = 'left'
-			bothchecker+=1
+			if keys[pygame.K_d]:
+				self.player.direction.x = 1
+				self.player.status = 'right'
+				bothchecker+=1
+			elif keys[pygame.K_a]:
+				self.player.direction.x = -1
+				self.player.status = 'left'
+				bothchecker+=1
+			else:
+				self.player.direction.x = 0
+			if bothchecker==2:
+				self.player.direction.x/=2
+				self.player.direction.y/=2
+			if keys[pygame.K_ESCAPE]:
+				if self.player.popup.active:
+					self.player.popup.active = False
+				elif self.phone_keypad_active:
+					self.phone_keypad_active = False
+					self.phone_keypad_content = ""
+				elif self.notes_active:
+					self.notes_active = False
 		else:
 			self.player.direction.x = 0
-		if bothchecker==2:
-			self.player.direction.x/=2
-			self.player.direction.y/=2
-		if keys[pygame.K_ESCAPE]:
-			if self.player.popup.active:
-				self.player.popup.active = False
-			elif self.phone_keypad_active:
-				self.phone_keypad_active = False
-				self.phone_keypad_content = ""
-			elif self.notes_active:
-				self.notes_active = False
-		
+			self.player.direction.y = 0
 		
 		for event in self.events:
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				sys.exit()
-			elif event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_p:
-					if self.task_list[0]=='Talk on phone' and check_for_object(self.nearest_object, 'telephone') and not self.phone_keypad_active:
-						self.phone_keypad_active = True
-					elif check_for_object(self.nearest_object, 'notes') and not self.notes_active:
-						self.notes_active = True
-				if event.key == pygame.K_i:
-					if check_for_object(self.nearest_object, task_to_obj[self.task_list[0]]) and not self.interact_time:
-						self.interact_time = time.time()
-						if not self.playing_music:
-							self.playing_music = True
+			elif event.type == pygame.MOUSEBUTTONDOWN:
+				if self.pause_rect.collidepoint(event.pos):
+					self.paused = not self.paused
+			elif (not self.paused):
+				if event.type == pygame.KEYDOWN and (not self.player.popup.active):
+					# print("not paused")
+					if event.key == pygame.K_p:
+						if self.task_list[0]=='Talk on phone' and check_for_object(self.nearest_object, 'telephone') and not self.phone_keypad_active:
+							self.phone_keypad_active = True
+						elif check_for_object(self.nearest_object, 'notes') and not self.notes_active:
+							self.notes_active = True
+					if event.key == pygame.K_i:
+						if check_for_object(self.nearest_object, task_to_obj[self.task_list[0]]) and not self.interact_time:
+							self.interact_time = time.time()
+							if not self.playing_music:
+								self.playing_music = True
+						else:
+							self.interact_time = None
 					else:
 						self.interact_time = None
-				else:
+					if self.phone_keypad_active:
+						if event.unicode.isnumeric() and len(self.phone_keypad_content) < 5:
+							self.phone_keypad_content += str(event.unicode)
+						elif event.key == pygame.K_BACKSPACE:
+							self.phone_keypad_content = self.phone_keypad_content[:-1]
+						elif event.key == pygame.K_RETURN:
+							check_keypad_code(self)
+				elif event.type == pygame.KEYUP and event.key == pygame.K_i and self.interact_time:
 					self.interact_time = None
-				if self.phone_keypad_active:
-					if event.unicode.isnumeric() and len(self.phone_keypad_content) < 5:
-						self.phone_keypad_content += str(event.unicode)
-					elif event.key == pygame.K_BACKSPACE:
-						self.phone_keypad_content = self.phone_keypad_content[:-1]
-					elif event.key == pygame.K_RETURN:
-						check_keypad_code(self)
-			elif event.type == pygame.KEYUP and event.key == pygame.K_i and self.interact_time:
+			else:
 				self.interact_time = None
-		
+
 		if self.notes_active:
 			display_task(self, 'Check the notes', None)
 		
@@ -272,10 +287,11 @@ class Level:
 	def run(self):
 		self.visible_sprites.custom_draw(self.player)
 		self.visible_sprites.update()
-		self.input()
-		self.activate_objects() 
 		render_tasks(self)
-		self.handle_popup()
+		self.input()
+		if(not self.paused):
+			self.activate_objects() 
+			self.handle_popup()
 		# self.update_brightness()
 
 class YSortCameraGroup(pygame.sprite.Group):

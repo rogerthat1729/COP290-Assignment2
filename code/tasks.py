@@ -17,6 +17,33 @@ font = pygame.font.Font(None,30)
 keypad_font2 = pygame.font.Font(None,20)
 notes_font = pygame.font.Font(None, 40)
 
+def draw_pause_screen(level):
+    screen = level.display_surface
+    surface = screen.copy()
+    amt = 10
+    scale = 1.0 / float(amt)
+    surf_size = (1600, 880)
+    scale_size = (int(surf_size[0] * scale), int(surf_size[1] * scale))
+    surf = pygame.transform.smoothscale(surface, scale_size)
+    surf = pygame.transform.smoothscale(surf, surf_size)
+    screen.blit(surf, (0, 0))
+
+def draw_pause_button(level):
+    screen = level.display_surface
+    if level.paused:
+        draw_pause_screen(level)
+        # overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+        # overlay.fill((0, 0, 0, 128))  # Semi-transparent black
+        # screen.blit(overlay, (0, 0))
+        pause_text = font.render("Paused.", True, 'white')
+        screen.blit(pause_text, (1500, 80))
+
+    pause_image = pygame.image.load('../graphics/ui/pause.png')
+    pause_rect = pause_image.get_rect(center=(1550, 50))
+    level.pause_rect = pause_rect
+    screen.blit(pause_image, pause_rect)
+
+
 def change_to_task_image(level, task):
     for spr in level.visible_sprites.sprites():
         if spr.sprite_type == 'object' and spr.name==task:
@@ -168,7 +195,7 @@ def display_task(level, task, start_time, total_time=3, content=""):
             if elapsed_time >= total_time:
                 return True
             return False
-
+        
 def show_popup(level, task):
     level.player.popup.text = task
     level.player.popup.show(level.display_surface)
