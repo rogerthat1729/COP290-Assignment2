@@ -3,11 +3,13 @@ from random import choice
 import time
 from support import *
 
-good_tasks = ["Do the dishes", "Talk on phone", "Do the laundry", "Read a book", "Take a bath", "Go to balcony", "Clean out the trash"]
+good_tasks = ["Buy groceries", "Clean out the trash", "Do the dishes", "Talk on phone", "Do the laundry", "Read a book", "Take a bath", "Go to balcony"]
 task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out the trash":"trash", "Take a bath":"bath", "Do the dishes":"sink", 
-               "Read a book":"book", 'Do the laundry':"wash"}
+               "Read a book":"book", 'Do the laundry':"wash", "Buy groceries":'door'}
 # taskobj = {"PHONE":"telephone", "BALCONY":"chair", "TRASH":"trashcan", }
 phone_codes = ["69420", "43210", "98543", "87658", "38961"]
+task_to_points = {"Talk on phone": 5, "Go to balcony": 10, "Clean out the trash": 5, "Take a bath": 10, "Do the dishes": 15, 
+                    "Read a book": 10, 'Do the laundry': 15, 'Buy groceries':10}
 
 pygame.init()
 font = pygame.font.Font(None,30)
@@ -50,7 +52,7 @@ def render_tasks(level):
     task_list = level.task_list
     y = 80
     display_surf = level.display_surface
-    background_surface = pygame.Surface((200, 350), pygame.SRCALPHA)
+    background_surface = pygame.Surface((200, 400), pygame.SRCALPHA)
     background_surface.fill((0, 0, 0, 64))
     display_surf.blit(background_surface, (10, 10))
     draw_health_bar(level)
@@ -60,12 +62,17 @@ def render_tasks(level):
         y += 40
     # level.happy = max(0, level.happy-0.01)
     if level.player.done_task==1:
-        play_music(task_to_seq[task_list[0]])
+        # play_music(task_to_seq[task_list[0]])\
+        pygame.mixer.stop()
         level.player.textbox_content = ""
+        level.happy = min(100, level.happy+task_to_points[task_list[0]])
+        curr_task = level.task_list[0]
         level.task_list.pop(0)
+        good_tasks.pop(good_tasks.index(curr_task))
         level.task_list.append(choice(good_tasks))
-        level.happy = min(100, level.happy+10)
+        good_tasks.append(curr_task)
         level.player.done_task = 0
+        level.player.show_player = True
 
 # def render_textbox(task, content, level):
 #     if not level.player.is_textbox_active:
