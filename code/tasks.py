@@ -3,18 +3,26 @@ from random import choice
 import time
 from support import *
 
-good_tasks = ["Buy groceries", "Clean out the trash", "Do the dishes", "Talk on phone", "Do the laundry", "Read a book", "Take a bath", "Go to balcony"]
+good_tasks = ["Take a nap", "Buy groceries", "Clean out the trash", "Do the dishes", "Talk on phone", "Do the laundry", 
+              "Read a book", "Take a bath", "Go to balcony"]
 task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out the trash":"trash", "Take a bath":"bath", "Do the dishes":"sink", 
-               "Read a book":"book", 'Do the laundry':"wash", "Buy groceries":'door'}
+               "Read a book":"book", 'Do the laundry':"wash", "Buy groceries":'door', "Take a nap":"bed"}
 # taskobj = {"PHONE":"telephone", "BALCONY":"chair", "TRASH":"trashcan", }
 phone_codes = ["69420", "43210", "98543", "87658", "38961"]
 task_to_points = {"Talk on phone": 5, "Go to balcony": 10, "Clean out the trash": 5, "Take a bath": 10, "Do the dishes": 15, 
-                    "Read a book": 10, 'Do the laundry': 15, 'Buy groceries':10}
+                    "Read a book": 10, 'Do the laundry': 15, 'Buy groceries':10, "Take a nap": 10}
 
 pygame.init()
 font = pygame.font.Font(None,30)
 keypad_font2 = pygame.font.Font(None,20)
 notes_font = pygame.font.Font(None, 40)
+
+def change_to_task_image(level, task):
+    for spr in level.visible_sprites.sprites():
+        if spr.sprite_type == 'object' and spr.name==task:
+            if level.interact_time:
+                spr.active = 2
+                spr.update_image()
 
 def play_music(task):
     pygame.mixer.music.load(f'../audio/{task}.mp3')

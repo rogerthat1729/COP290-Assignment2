@@ -11,7 +11,7 @@ import sys
 import time
 
 index_to_name = {1419:'chair', 1389:'trashcan', 1357:'telephone', 1485:'bathtub', 1386:'sink', 1390:'books', 
-				 1391:'notes', 1480:'washing_machine', 1742:'door'}
+				 1391:'notes', 1480:'washing_machine', 1742:'door', 1738:'bed'}
 
 def create_radial_gradient(width, height, inner_color, outer_color):
     surface = pygame.Surface((width, height), pygame.SRCALPHA)
@@ -53,7 +53,7 @@ bad_tasks = {1:["You browsed through social media for 2 hours.",  "Your mental h
 				5: ["You stayed in bed all day and didn't talk to anyone", "Your mental health is reduced by 20 points"]}
 happiness_reduced = {1:10, 2:10, 3:15, 4:15, 5:20}
 task_to_obj = {"Talk on phone":'telephone', "Go to balcony":'chair', "Clean out the trash":'trashcan', "Take a bath":'bathtub', "Do the dishes":'sink', 
-			   "Read a book":'books', 'Do the laundry':'washing_machine', "Buy groceries":'door'}
+			   "Read a book":'books', 'Do the laundry':'washing_machine', "Buy groceries":'door', 'Take a nap':'bed'}
 
 class Level:
 	def __init__(self):
@@ -77,7 +77,7 @@ class Level:
 
 		self.brightness_wait = 0
 		self.pop_up_wait = 0
-		self.bad_task_wait = 10000
+		self.bad_task_wait = 600
 		
 		self.events = []
 
@@ -219,13 +219,16 @@ class Level:
 			display_task(self, self.task_list[0], self.interact_time, self.interact_wait, self.phone_keypad_content)
 			if self.task_list[0]=='Buy groceries':
 				self.player.show_player = False
+			elif self.task_list[0]=='Take a nap':
+				self.player.show_player = False
+				change_to_task_image(self, 'bed')
 			if self.playing_music:
 				play_music(task_to_seq[self.task_list[0]])
 				self.playing_music = False
 		else:
 			self.interact_time = None
 			self.player.show_player = True
-		
+
 		if self.interact_time:
 			if self.task_list[0] == 'Talk on phone':
 				pass
@@ -243,7 +246,7 @@ class Level:
 			if abs(player.rect.centerx - obj.rect.centerx) >= 100 or abs(player.rect.centery - obj.rect.centery) >= 100:
 				self.nearest_object.pop(self.nearest_object.index(obj))
 		for spr in self.visible_sprites.sprites():
-			if spr.sprite_type == 'object' and spr.name:
+			if spr.sprite_type == 'object' and spr.name and (not self.interact_time) :
 				if abs(player.rect.centerx - spr.rect.centerx) < 100 and abs(player.rect.centery - spr.rect.centery) < 100:
 					spr.active = 1
 					self.nearest_object.append(spr)
