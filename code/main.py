@@ -71,9 +71,6 @@ def main():
             elif current_menu == 'intro':
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RIGHT:
-                        if current_screen_index >= len(screens):
-                            game = Game(start_menu.characters[start_menu.selected_character], start_menu.difficulties[start_menu.selected_difficulty])
-                            game.run()
                         current_screen_index += 1
         if current_menu == 'menu':
             menu.draw(screen)
@@ -83,6 +80,9 @@ def main():
             settings_menu.draw(screen)
         elif current_menu == 'intro' and current_screen_index < len(screens):
             screens[current_screen_index].render(screen)
+        elif current_menu == 'intro' and current_screen_index >= len(screens):
+            game = Game(start_menu.characters[start_menu.selected_character], start_menu.difficulties[start_menu.selected_difficulty])
+            game.run()
         pygame.display.flip()
         clock.tick(60)
     sys.exit()

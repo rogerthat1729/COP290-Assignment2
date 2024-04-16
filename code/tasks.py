@@ -12,7 +12,7 @@ task_to_points = {"Talk on phone": 5, "Go to balcony": 10, "Clean out the trash"
                     "Read a book": 10, 'Do the laundry': 15, 'Buy groceries':10, "Take a nap": 10}
 
 pygame.init()
-font = pygame.font.Font('../graphics/font/joystix.ttf',15)
+font = pygame.font.Font('../graphics/font/joystix.ttf',18)
 keypad_font2 = pygame.font.Font(None,20)
 notes_font = pygame.font.Font(None, 40)
 
@@ -89,7 +89,7 @@ def render_tasks(level):
     task_list = level.task_list
     y = 80
     display_surf = level.display_surface
-    background_surface = pygame.Surface((250, 450), pygame.SRCALPHA)
+    background_surface = pygame.Surface((300, 450), pygame.SRCALPHA)
     background_surface.fill((0, 0, 0, 64))
     display_surf.blit(background_surface, (10, 10))
     draw_health_bar(level)

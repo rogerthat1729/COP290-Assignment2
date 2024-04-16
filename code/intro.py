@@ -1,6 +1,8 @@
 import pygame
 from settings import *
 
+font = pygame.font.Font("../graphics/font/merchant.ttf", 40)
+
 class IntroScreen:
     def __init__(self, text, image_path, char_delay=20):
         self.full_text = text
@@ -14,7 +16,6 @@ class IntroScreen:
 
     def render(self, screen):
         screen.fill('black')
-        font = pygame.font.Font(None, 24)  # Decrease font size to 24 (or adjust as needed)
 
         # Render text at the bottom, gradually typing out
         if pygame.time.get_ticks() - self.last_char_render_time > self.char_delay:

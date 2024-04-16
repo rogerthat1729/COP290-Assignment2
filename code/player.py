@@ -11,15 +11,14 @@ task_to_seq = {"Talk on phone": [pygame.K_p, pygame.K_h, pygame.K_o, pygame.K_n,
 			   "Clean your room": [pygame.K_c, pygame.K_l, pygame.K_e, pygame.K_a, pygame.K_n]}
 
 class Player(pygame.sprite.Sprite):
-	def __init__(self,pos,groups,obstacle_sprites):
+	def __init__(self,pos,groups,obstacle_sprites, character):
 		super().__init__(groups)
-		self.image = pygame.image.load('../graphics/test/player.png').convert_alpha()
+		self.image = pygame.image.load('../graphics/test/player1.png').convert_alpha()
 		self.rect = self.image.get_rect(topleft = pos)
 		self.hitbox = self.rect.inflate(0,-26)
 		self.speed = 10
-		self.character = 'Susan'
 
-		self.import_player_assets()
+		self.import_player_assets(character)
 		self.sprite_type = 'player'
 		self.show_player = True
 		self.status = 'down'
@@ -37,8 +36,10 @@ class Player(pygame.sprite.Sprite):
 
 		self.obstacle_sprites = obstacle_sprites
 
-	def import_player_assets(self):
-		character_path = '../graphics/player/'
+	def import_player_assets(self, character):
+		character_path = '../graphics/player1/'
+		if character == 'character2':
+			character_path = '../graphics/player2/'
 		self.animations = {'up': [],'down': [],'left': [],'right': [],
 			'right_idle':[],'left_idle':[],'up_idle':[],'down_idle':[]}
 

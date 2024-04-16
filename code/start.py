@@ -2,7 +2,7 @@ import pygame
 import sys
 from settings import *
 
-FONT = pygame.font.Font(None, 36)
+FONT = pygame.font.Font("../graphics/font/joystix.ttf", 18)
 GRAY = (200, 200, 200)
 WHITE = (255, 255, 255)
 
@@ -32,7 +32,7 @@ class Menu:
         for menu_name, options in self.menus.items():
             y = 100
             for option in options:
-                rect = pygame.Rect(100, y, 200, 50)
+                rect = pygame.Rect(750, y, 200, 50)
                 self.buttons[menu_name].append((option, rect))
                 y += 60
 
@@ -52,17 +52,17 @@ class Menu:
 
 class StartMenu(Menu):
     def __init__(self):
-        self.character_images = [pygame.image.load('0.png'), pygame.image.load('1.png')]
+        self.character_images = [pygame.image.load('../graphics/player1/down_idle/idle_down.png'), pygame.image.load('../graphics/player2/down_idle/idle_down.png')]
         self.characters = ['Character 1', 'Character 2']
         self.difficulties = ['Easy', 'Medium', 'Hard']
         self.selected_character = 0
         self.selected_difficulty = 0
-        self.start_game_rect = pygame.Rect(800, 500, 200, 50)
-        self.back_rect = pygame.Rect(800, 600, 100, 50)
+        self.start_game_rect = pygame.Rect(700, 400, 200, 50)
+        self.back_rect = pygame.Rect(700, 500, 100, 50)
 
         # Load images and set positions
-        self.character_positions = [(600, 150), (1000, 150)]
-        self.difficulty_positions = [(600, 300), (800, 300), (1000, 300)]
+        self.character_positions = [(550, 150), (950, 150)]
+        self.difficulty_positions = [(550, 300), (750, 300), (950, 300)]
 
     def draw(self, surface):
         self.draw_characters(surface)
@@ -71,7 +71,7 @@ class StartMenu(Menu):
 
     def draw_characters(self, surface):
         char_text = FONT.render("Select Character", True, (255, 255, 255))
-        surface.blit(char_text, (800, 100))
+        surface.blit(char_text, (700, 100))
         for i, image in enumerate(self.character_images):
             rect = pygame.Rect(*self.character_positions[i], image.get_width(), image.get_height())
             surface.blit(image, rect.topleft)
@@ -80,7 +80,7 @@ class StartMenu(Menu):
 
     def draw_difficulties(self, surface):
         diff_text = FONT.render("Select Difficulty", True, (255, 255, 255))
-        surface.blit(diff_text, (800, 250))
+        surface.blit(diff_text, (700, 250))
         for i, difficulty in enumerate(self.difficulties):
             text = FONT.render(difficulty, True, (255, 255, 255))
             rect = pygame.Rect(*self.difficulty_positions[i], 100, 30)
@@ -118,17 +118,21 @@ class SettingsMenu(Menu):
     def __init__(self):
         self.music_volume = 50  # Default volume
         self.game_volume = 50  # Default volume
-        self.slider_positions = {'music': (100, 150), 'game': (100, 250)}
-        self.sliders = {'music': pygame.Rect(100, 150, 200, 20), 'game': pygame.Rect(100, 250, 200, 20)}
+        self.slider_positions = {'music': (750, 150), 'game': (750, 250)}
+        self.sliders = {'music': pygame.Rect(750, 150, 200, 20), 'game': pygame.Rect(750, 250, 200, 20)}
 
     def draw(self, surface):
         # Draw each slider
+        music_text = FONT.render("Music Volume", True, (255, 255, 255))
+        game_text = FONT.render("In-game Volume", True, (255, 255, 255))
+        surface.blit(music_text, (700, 100))
+        surface.blit(game_text, (700, 200))
         for key, rect in self.sliders.items():
             pygame.draw.rect(surface, GRAY, rect)  # The slider background
             pygame.draw.rect(surface, WHITE, (rect.x, rect.y, self.music_volume if key == 'music' else self.game_volume, rect.height))  # The volume level
 
         # Draw back button
-        back_button = pygame.Rect(100, 350, 100, 50)
+        back_button = pygame.Rect(700, 350, 100, 50)
         draw_button("Back", back_button, GRAY, surface)
     
     def handle_event(self, event):

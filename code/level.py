@@ -66,15 +66,14 @@ class Level:
 		# sprite group setup
 		self.visible_sprites = YSortCameraGroup()
 		self.obstacle_sprites = pygame.sprite.Group()
-		
+
 		#tasks
 		self.happy = 50
 		self.task_list = good_tasks.copy()
 		self.bad_task = ""
-		self.player = Player((1980,1500),[self.visible_sprites],self.obstacle_sprites)
+		self.player = Player((1980,1500),[self.visible_sprites],self.obstacle_sprites, character)
 		self.show_player = True
 		self.player.speed = 5 + (self.happy/100)*5
-		self.player.character = character
 
 		self.brightness_wait = 0
 		self.pop_up_wait = 0
@@ -122,7 +121,7 @@ class Level:
 							Tile((x,y),[self.obstacle_sprites],'invisible')
 						elif style == 'object':
 							if idx in index_to_name.keys():
-								imgs = import_folder('../objects/'+index_to_name[idx])
+								imgs = import_folder('../graphics/objects/'+index_to_name[idx])
 								Tile((x,y),[self.visible_sprites,self.obstacle_sprites],'object',imgs, index_to_name[idx])
 							else:
 								surf = graphics['objects'][idx]
