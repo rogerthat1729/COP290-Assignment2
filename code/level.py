@@ -77,7 +77,7 @@ class Level:
 
 		self.brightness_wait = 0
 		self.pop_up_wait = 0
-		self.bad_task_wait = 200
+		self.bad_task_wait = 300
 		
 		self.events = []
 
@@ -128,7 +128,7 @@ class Level:
 								Tile((x,y),[self.visible_sprites,self.obstacle_sprites],'object',[surf])
 
 	def update_brightness(self):
-		width, height = self.display_surface.get_size()
+		width, height = self.display_surface.get_size() 
 		alpha = happiness_to_alpha(self.happy)
 		inner_color = (0, 0, 0, 0)
 		outer_color = (0, 0, 0, min(alpha*4, 255))
