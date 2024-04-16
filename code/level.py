@@ -121,6 +121,7 @@ class Level:
 							Tile((x,y),[self.obstacle_sprites],'invisible')
 						elif style == 'object':
 							if idx in index_to_name.keys():
+								print(index_to_name[idx])
 								imgs = import_folder('../graphics/objects/'+index_to_name[idx])
 								Tile((x,y),[self.visible_sprites,self.obstacle_sprites],'object',imgs, index_to_name[idx])
 							else:
