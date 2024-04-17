@@ -81,11 +81,9 @@ def change_to_task_image(level, task):
                 spr.update_image()
 
 def play_music(task, level):
-    pygame.mixer.music.stop()
     pygame.mixer.music.set_volume(level.game_volume/100)
     pygame.mixer.music.load(f'../audio/{task}.mp3')
     pygame.mixer.music.play()
-    # pygame.mixer.music.set_volume(level.music_volume/100)
 
 def check_keypad_code(level):
     if level.phone_keypad_content == level.correct_code:

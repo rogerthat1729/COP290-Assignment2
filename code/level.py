@@ -13,6 +13,8 @@ import time
 index_to_name = {1419:'chair', 1389:'trashcan', 1357:'telephone', 1485:'bathtub', 1386:'sink', 1390:'books', 
 				 1391:'notes', 1480:'washing_machine', 1742:'door', 1738:'bed'}
 
+pygame.mixer.init()
+
 def create_radial_gradient(width, height, inner_color, outer_color):
     surface = pygame.Surface((width, height), pygame.SRCALPHA)
     center = (width // 2, height // 2)
@@ -87,9 +89,9 @@ class Level:
 		self.nearest_object = []
 		self.interact_time = None
 		self.interact_wait = 4
-		self.playing_music = False
-		self.playing_bg = True
-		self.bg_track_path = '../audio/.mp3'
+
+		self.gamebg_track_path = '../audio/background_music.mp3'
+		self.menubg_track_path = '../audio/bg.mp3'
 
 		self.phone_keypad_content = ""
 		self.phone_keypad_active = False
@@ -105,6 +107,7 @@ class Level:
 
 		self.task_music_running = 0
 		self.game_music_running = 1
+		self.menu_music_running = 0
 
 		self.booktask = BookTask(self)
 		self.book_active = False
@@ -162,12 +165,42 @@ class Level:
 		if self.player.popup.active:
 			show_popup(self, self.bad_task)
 	
-	# def handle_music(self):
-	# 	if self.game_music_running == 1:
-	# 		pygame.mixer.music.load(self.bg_track_path)
-	# 		pygame.mixer.music.set_volume(self.music_volume)
-	# 		pygame.mixer.music.play(-1)
-	# 		self.game_music_running = 0
+	def handle_music(self):
+		print(self.game_music_running, self.menu_music_running, self.task_music_running)
+
+		if self.paused and self.menu_music_running==0:
+			self.game_music_running = 0
+			self.task_music_running = 0
+			self.menu_music_running = 1
+		elif not self.paused and self.menu_music_running==2:
+			if self.task_music_running==2:
+				self.task_music_running = 1
+			else:
+				self.game_music_running = 1
+			self.menu_music_running=0
+		elif self.task_music_running==1:
+			self.game_music_running=0
+			self.menu_music_running=0
+		elif self.task_music_running==2 and pygame.mixer.music.get_busy()==0:
+			self.task_music_running = 0
+			self.game_music_running = 1
+
+		if self.game_music_running == 1:
+			pygame.mixer.music.stop()
+			pygame.mixer.music.load(self.gamebg_track_path)
+			pygame.mixer.music.set_volume(self.music_volume)
+			pygame.mixer.music.play(-1)
+			self.game_music_running = 2
+		elif self.menu_music_running == 1:
+			pygame.mixer.music.stop()
+			pygame.mixer.music.load(self.menubg_track_path)
+			pygame.mixer.music.set_volume(self.music_volume)
+			pygame.mixer.music.play(-1)
+			self.menu_music_running = 2
+		elif self.task_music_running == 1:
+			pygame.mixer.music.stop()
+			play_music(task_to_seq[self.task_list[0]], self)
+			self.game_music_running = 2
 		
 	def input(self):
 		# print(self.paused)
@@ -234,8 +267,6 @@ class Level:
 					if event.key == pygame.K_i:
 						if check_for_object(self.nearest_object, task_to_obj[self.task_list[0]]) and not self.interact_time:
 							self.interact_time = time.time()
-							if not self.playing_music:
-								self.playing_music = True
 						else:
 							self.interact_time = None
 					else:
@@ -265,9 +296,6 @@ class Level:
 					self.player.show_player = False
 					fade_to_black(self)
 					change_to_task_image(self, 'bed')
-				if self.playing_music:
-					play_music(task_to_seq[self.task_list[0]], self)
-					self.playing_music = False
 			else:
 				self.interact_time = None
 				self.player.show_player = True
@@ -326,6 +354,7 @@ class Level:
 		render_tasks(self)
 		self.input()
 		self.check_menu(game)
+		self.handle_music()
 		if(not self.paused):
 			self.update_recovery()
 			self.check_win_or_lose(game)
