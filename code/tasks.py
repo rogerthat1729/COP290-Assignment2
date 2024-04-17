@@ -25,7 +25,8 @@ notes_font = pygame.font.Font(None, 40)
 def fade_to_black(level):
     if level.interact_time:
         overlay = pygame.Surface(level.display_surface.get_size(), pygame.SRCALPHA)
-        color = int(((time.time() - level.interact_time)/level.interact_wait)*255)
+        color = min(255, int(((time.time() - level.interact_time)/level.interact_wait)*255))
+        
         overlay.fill((0, 0, 0, color))
         level.display_surface.blit(overlay, (0, 0))
 
@@ -74,11 +75,19 @@ def draw_pause_button(level):
 
 
 def change_to_task_image(level, task):
-    for spr in level.visible_sprites.sprites():
-        if spr.sprite_type == 'object' and spr.name==task:
-            if level.interact_time:
-                spr.active = 2
-                spr.update_image()
+    if task == 'bed':
+        for spr in level.visible_sprites.sprites():
+            if spr.sprite_type == 'object' and spr.name==task:
+                if level.interact_time:
+                    spr.active = 2
+                    spr.update_image()
+    # elif task == 'door':
+    #     for spr in level.visible_sprites.sprites():
+    #         if spr.sprite_type == 'object' and spr.name==task:
+    #             if level.interact_time:
+    #                 idx = 2 + int((time.time() - level.interact_time)/level.interact_wait*3.999)
+    #                 spr.active = idx
+    #                 spr.update_image()
 
 def play_music(task, level):
     pygame.mixer.music.set_volume(level.game_volume/100)
@@ -133,8 +142,7 @@ def render_tasks(level):
         y += 40
     # level.happy = max(0, level.happy-0.01)
     if level.player.done_task==1:
-        # play_music(task_to_seq[task_list[0]])\
-        pygame.mixer.stop()
+        level.handle_music(2)
         level.player.textbox_content = ""
         level.happy = min(100, level.happy+task_to_points[task_list[0]])
         curr_task = level.task_list[0]
@@ -220,6 +228,7 @@ def display_task(level, task, start_time, total_time=3, content=""):
                     sink_image = sink_animations[frame_index]
                     sink_rect = sink_image.get_rect(center=((800/1600)*WIDTH, (400/880)*HEIGHT))
                     screen.blit(sink_image, sink_rect)
+
             elif task=='Do the laundry':
                 wm_animations = import_folder('../graphics/tasks/washing_machine')
                 frame_index = int((elapsed_time/total_time)*2.999)
@@ -295,10 +304,12 @@ class BookTask:
     def __init__(self, level):
         self.book_image = pygame.image.load('../graphics/tasks/books/book.png')
         self.level = level
-        self.pages = [["Page 1 text", "Ok boomer", "Hi Okay"], ["Page 2 text"], ["Page 3 text"]] # Example pages
+        self.pages = [[pygame.image.load('../graphics/tasks/cb/cb3.png'), pygame.image.load('../graphics/tasks/cb/cb1.png')],
+                       [pygame.image.load('../graphics/tasks/cb/cb4.png'), pygame.image.load('../graphics/tasks/cb/cb1.png')],
+                         [pygame.image.load('../graphics/tasks/cb/cb5.png')]] # Example pages
         self.current_page = 0
         self.active = False
-        self.code = "6969"
+        self.code = "31415"
         self.user_input = ""
         self.font = pygame.font.Font("../graphics/font/joystix.ttf", 14)
 
@@ -310,25 +321,44 @@ class BookTask:
             return
         # Render the book image with text
         self.level.display_surface.blit(self.book_image, (WIDTH // 2 - self.book_image.get_width() // 2, HEIGHT // 2 - self.book_image.get_height() // 2))
-        self.render_text()
+        
+        if self.current_page == 0:
+            img1 = pygame.transform.scale(self.pages[0][0], (170, 170))
+            img2 = pygame.transform.scale(self.pages[0][1], (200, 200))
+            self.level.display_surface.blit(img1, (WIDTH // 2 - 230, HEIGHT // 2 - 80))
+            self.level.display_surface.blit(img2, (WIDTH // 2 - 10, HEIGHT // 2 - 100))
+        elif self.current_page == 1:
+            img1 = pygame.transform.scale(self.pages[1][0], (200, 200))
+            img2 = pygame.transform.scale(self.pages[1][1], (200, 200))
+            self.level.display_surface.blit(img1, (WIDTH // 2 - 250, HEIGHT // 2 - 100))
+            self.level.display_surface.blit(img2, (WIDTH // 2 - 10, HEIGHT // 2 - 100))
+        else:
+            img1 = pygame.transform.scale(self.pages[2][0], (200, 200))
+            self.level.display_surface.blit(img1, (WIDTH // 2 - 250, HEIGHT // 2 - 100))
 
-        # If on the last page, render the textbox for code input
-        if self.current_page == len(self.pages) - 1:
-            pygame.draw.rect(self.level.display_surface, 'white', (WIDTH // 2 + 10, HEIGHT // 2 + 120, 150, 30))
-            pygame.draw.rect(self.level.display_surface, 'black', (WIDTH // 2 + 10, HEIGHT // 2 + 120, 150, 30), 2)
+            text1 = self.font.render("Enter the code:", True, 'black')
+            self.level.display_surface.blit(text1, (WIDTH // 2, HEIGHT // 2 - 50))
+
+            pygame.draw.rect(self.level.display_surface, 'white', (WIDTH // 2 + 10, HEIGHT // 2, 150, 30))
+            pygame.draw.rect(self.level.display_surface, 'black', (WIDTH // 2 + 10, HEIGHT // 2, 150, 30), 2)
             input_surface = self.font.render(self.user_input, True, (0, 0, 0))
-            self.level.display_surface.blit(input_surface, (WIDTH // 2 + 15, HEIGHT // 2 + 125))
+            self.level.display_surface.blit(input_surface, (WIDTH // 2 + 15, HEIGHT // 2 + 5))
         
     def render_text(self):
         y = HEIGHT//2 - self.book_image.get_height()//2 + 90
         x = WIDTH//2 - self.book_image.get_width()//2 + 100
-        for line in self.pages[self.current_page]:
-            text_surface = self.font.render(line, True, 'black')
-            self.level.display_surface.blit(text_surface, (x, y))
-            y += text_surface.get_height() + 5
+        #resize image to 100 x 200
+        pg_image = pygame.transform.scale(self.pages[self.current_page], (100, 200))
+        # for line in self.pages[self.current_page]:
+        #     #resize image to 100 x 200
+        #     # text_surface = self.font.render(line, True, 'black')
+        #     # self.level.display_surface.blit(text_surface, (x, y))
+        #     y += text_surface.get_height() + 5
 
     def handle_input(self, event):
         if not self.active:
+            self.current_page = 0
+            self.user_input = ""
             return
         
         if event.type == pygame.KEYDOWN:
@@ -351,8 +381,8 @@ class BookTask:
                 self.current_page = 0
                 self.user_input = ""
                 self.active = False
-            elif event.unicode.isalnum():
-                if len(self.user_input) < 4:
+            elif event.unicode.isnumeric():
+                if len(self.user_input) < 5 and self.current_page == len(self.pages) - 1:
                     self.user_input += event.unicode
             elif event.key == pygame.K_BACKSPACE:
                 if len(self.user_input) > 0:

@@ -51,6 +51,7 @@ class Menu:
     def draw(self, surface):
         pygame.display.set_caption("Petrichor")
         bg = pygame.image.load('../graphics/ui/bg.png')
+        bg = pygame.transform.scale(bg, (WIDTH, HEIGHT))
         surface.blit(bg, (0, 0))
         draw_title("Petrichor", surface)
         draw_text("Main Menu", pygame.font.Font("../graphics/font/joystix.ttf", 48), 'white', surface, mid_width-130, 250)

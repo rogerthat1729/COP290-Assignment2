@@ -19,6 +19,7 @@ class Game:
         self.screen.fill('black')
         while True:
             self.level.events = pygame.event.get()
+            # print(self.level.events)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()

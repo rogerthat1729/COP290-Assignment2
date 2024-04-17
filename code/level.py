@@ -90,7 +90,7 @@ class Level:
 		self.interact_time = None
 		self.interact_wait = 4
 
-		self.gamebg_track_path = '../audio/background_music.mp3'
+		self.gamebg_track_path = '../audio/gamebg.mp3'
 		self.menubg_track_path = '../audio/bg.mp3'
 
 		self.phone_keypad_content = ""
@@ -165,42 +165,90 @@ class Level:
 		if self.player.popup.active:
 			show_popup(self, self.bad_task)
 	
-	def handle_music(self):
-		print(self.game_music_running, self.menu_music_running, self.task_music_running)
+	def handle_music(self, arg=None):	
+		# print(self.menu_music_running, self.game_music_running, self.task_music_running)
+		if not arg:
+			if self.menu_music_running == 0 and self.game_music_running == 1 and self.task_music_running == 0:
+				pygame.mixer.music.stop()
+				pygame.mixer.music.load(self.gamebg_track_path)
+				pygame.mixer.music.set_volume(self.music_volume)
+				pygame.mixer.music.play(-1)
+				self.game_music_running = 2
+			if self.menu_music_running == 0 and self.game_music_running == 0 and self.task_music_running == 1:
+				pygame.mixer.music.stop()
+				play_music(task_to_seq[self.task_list[0]], self)
+				self.task_music_running = 2
+			if self.menu_music_running == 1 and self.game_music_running == 0 and (self.task_music_running == 0 or self.task_music_running == 2):
+				pygame.mixer.music.stop()
+				pygame.mixer.music.load(self.menubg_track_path)
+				pygame.mixer.music.set_volume(self.music_volume)
+				pygame.mixer.music.play(-1)
+				self.menu_music_running = 2
+		else:
+			if arg == 1:
+				if self.menu_music_running==0 and self.game_music_running==2 and self.task_music_running==0:
+					self.menu_music_running = 1
+					self.game_music_running = 0
+					self.task_music_running = 0
+				elif self.menu_music_running==0 and self.game_music_running==0 and self.task_music_running==2:
+					self.menu_music_running = 1
+					self.game_music_running = 0
+					self.task_music_running = 2
+			elif arg==2:
+				if self.menu_music_running==0 and self.game_music_running==0 and self.task_music_running==2:
+					self.menu_music_running = 0
+					self.game_music_running = 1
+					self.task_music_running = 0
+			elif arg==3:
+				if self.menu_music_running==2 and self.game_music_running==0 and self.task_music_running==2:
+					self.menu_music_running = 0
+					self.game_music_running = 0
+					self.task_music_running = 1
+				elif self.menu_music_running==2 and self.game_music_running==0 and self.task_music_running==0:
+					self.menu_music_running = 0
+					self.game_music_running = 1
+					self.task_music_running = 0
+			elif arg==4:
+				if self.menu_music_running==0 and self.game_music_running==2 and self.task_music_running==0:
+					self.menu_music_running = 0
+					self.game_music_running = 0
+					self.task_music_running = 1
+			# self.handle_music()
+		# if self.paused and self.menu_music_running==0:
+		# 	self.game_music_running = 0
+		# 	self.task_music_running = 0
+		# 	self.menu_music_running = 1
+		# elif not self.paused and self.menu_music_running==2:
+		# 	if self.task_music_running==1:
+		# 		pass
+		# 	elif self.task_music_running==2:
+		# 		self.task_music_running = 1
+		# 	else:
+		# 		self.game_music_running = 1
+		# 	self.menu_music_running=0
+		# elif self.task_music_running==1:
+		# 	self.game_music_running=0
+		# 	self.menu_music_running=0
+		# elif self.task_music_running==2 and pygame.mixer.music.get_busy()==0:
+		# 	self.task_music_running = 0
+		# 	self.game_music_running = 1
 
-		if self.paused and self.menu_music_running==0:
-			self.game_music_running = 0
-			self.task_music_running = 0
-			self.menu_music_running = 1
-		elif not self.paused and self.menu_music_running==2:
-			if self.task_music_running==2:
-				self.task_music_running = 1
-			else:
-				self.game_music_running = 1
-			self.menu_music_running=0
-		elif self.task_music_running==1:
-			self.game_music_running=0
-			self.menu_music_running=0
-		elif self.task_music_running==2 and pygame.mixer.music.get_busy()==0:
-			self.task_music_running = 0
-			self.game_music_running = 1
-
-		if self.game_music_running == 1:
-			pygame.mixer.music.stop()
-			pygame.mixer.music.load(self.gamebg_track_path)
-			pygame.mixer.music.set_volume(self.music_volume)
-			pygame.mixer.music.play(-1)
-			self.game_music_running = 2
-		elif self.menu_music_running == 1:
-			pygame.mixer.music.stop()
-			pygame.mixer.music.load(self.menubg_track_path)
-			pygame.mixer.music.set_volume(self.music_volume)
-			pygame.mixer.music.play(-1)
-			self.menu_music_running = 2
-		elif self.task_music_running == 1:
-			pygame.mixer.music.stop()
-			play_music(task_to_seq[self.task_list[0]], self)
-			self.game_music_running = 2
+		# if self.game_music_running == 1:
+		# 	pygame.mixer.music.stop()
+		# 	pygame.mixer.music.load(self.gamebg_track_path)
+		# 	pygame.mixer.music.set_volume(self.music_volume)
+		# 	pygame.mixer.music.play(-1)
+		# 	self.game_music_running = 2
+		# elif self.menu_music_running == 1:
+		# 	pygame.mixer.music.stop()
+		# 	pygame.mixer.music.load(self.menubg_track_path)
+		# 	pygame.mixer.music.set_volume(self.music_volume)
+		# 	pygame.mixer.music.play(-1)
+		# 	self.menu_music_running = 2
+		# elif self.task_music_running == 1:
+		# 	pygame.mixer.music.stop()
+		# 	play_music(task_to_seq[self.task_list[0]], self)
+		# 	self.task_music_running = 2
 		
 	def input(self):
 		# print(self.paused)
@@ -243,8 +291,12 @@ class Level:
 		else:
 			self.player.direction.x = 0
 			self.player.direction.y = 0
-
 		
+		if not self.paused and self.menu_music_running==2:
+			self.handle_music(3)
+		elif self.paused:
+			self.handle_music(1)
+
 		self.booktask.render()
 		for event in self.events:
 			self.booktask.handle_input(event)
@@ -253,24 +305,26 @@ class Level:
 				sys.exit()
 			elif event.type == pygame.MOUSEBUTTONDOWN:
 				if self.pause_rect.collidepoint(event.pos):
+					if self.paused:
+						self.handle_music(1)
 					self.paused = not self.paused
 			elif (not self.paused):
 				if event.type == pygame.KEYDOWN and (not self.player.popup.active):
 					if event.key == pygame.K_b:
 						if self.task_list[0]=='Read a book' and check_for_object(self.nearest_object, 'books') and not self.book_active:
 							self.booktask.active = True
-					if event.key == pygame.K_p:
+					elif event.key == pygame.K_p:
 						if self.task_list[0]=='Talk on phone' and check_for_object(self.nearest_object, 'telephone') and not self.phone_keypad_active:
 							self.phone_keypad_active = True
 						elif check_for_object(self.nearest_object, 'notes') and not self.notes_active:
 							self.notes_active = True
-					if event.key == pygame.K_i:
+					elif event.key == pygame.K_i:
 						if check_for_object(self.nearest_object, task_to_obj[self.task_list[0]]) and not self.interact_time:
 							self.interact_time = time.time()
-						else:
-							self.interact_time = None
+							self.handle_music(4)
 					else:
 						self.interact_time = None
+						self.handle_music(2)
 					if self.phone_keypad_active:
 						if event.unicode.isnumeric() and len(self.phone_keypad_content) < 5:
 							self.phone_keypad_content += str(event.unicode)
@@ -279,9 +333,13 @@ class Level:
 						elif event.key == pygame.K_RETURN:
 							check_keypad_code(self)
 				elif event.type == pygame.KEYUP and event.key == pygame.K_i and self.interact_time:
+					self.show_player = True
 					self.interact_time = None
+					self.handle_music(2)
 			else:
+				self.show_player = True
 				self.interact_time = None
+				self.handle_music(2)
 		
 	def handle_tasks(self):
 		if self.notes_active:
@@ -289,16 +347,23 @@ class Level:
 
 		if self.player.done_task == 0 and check_for_object(self.nearest_object, task_to_obj[self.task_list[0]]):
 			if (self.interact_time or self.phone_keypad_active):
+				# print(self.interact_time==None)
 				display_task(self, self.task_list[0], self.interact_time, self.interact_wait, self.phone_keypad_content)
 				if self.task_list[0]=='Buy groceries':
 					self.player.show_player = False
+					change_to_task_image(self, 'door')
 				elif self.task_list[0]=='Take a nap':
 					self.player.show_player = False
 					fade_to_black(self)
 					change_to_task_image(self, 'bed')
 			else:
+				self.handle_music(2)
 				self.interact_time = None
 				self.player.show_player = True
+		else:
+			self.handle_music(2)
+			self.interact_time = None
+			self.player.show_player = True
 		
 		if self.player.done_task == 1 or self.task_list[0] != 'Read a book' or not check_for_object(self.nearest_object, 'books'):
 			self.booktask.active = False
@@ -310,8 +375,6 @@ class Level:
 				if time.time() - self.interact_time >= self.interact_wait and check_for_object(self.nearest_object, task_to_obj[self.task_list[0]]):
 					self.player.done_task = 1
 					self.interact_time = None
-		else:
-			pygame.mixer.music.stop()
 		# pygame.mixer.music.play('../audio/bg.mp3')
 			
 	
@@ -361,6 +424,7 @@ class Level:
 			self.handle_tasks()
 			self.activate_objects() 
 			self.handle_popup()
+		# print("here")
 		# self.update_brightness()
 
 class YSortCameraGroup(pygame.sprite.Group):
