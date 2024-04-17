@@ -70,8 +70,8 @@ class Level:
 		self.go_to_menu = False
 
 		#tasks
-		self.happy = 90
-		self.recovery = 95
+		self.happy = 50
+		self.recovery = 0
 		self.task_list = good_tasks.copy()
 		self.bad_task = ""
 		self.player = Player((1980,1500),[self.visible_sprites],self.obstacle_sprites, character)
@@ -89,7 +89,7 @@ class Level:
 		self.interact_wait = 4
 		self.playing_music = False
 		self.playing_bg = True
-		self.bg_track_path = '../audio/bg.mp3'
+		self.bg_track_path = '../audio/.mp3'
 
 		self.phone_keypad_content = ""
 		self.phone_keypad_active = False
@@ -102,6 +102,9 @@ class Level:
 		
 		self.music_volume = music_volume
 		self.game_volume = game_volume
+
+		self.task_music_running = 0
+		self.game_music_running = 1
 
 		self.booktask = BookTask(self)
 		self.book_active = False
@@ -158,7 +161,14 @@ class Level:
 			self.pop_up_wait += 1
 		if self.player.popup.active:
 			show_popup(self, self.bad_task)
- 
+	
+	# def handle_music(self):
+	# 	if self.game_music_running == 1:
+	# 		pygame.mixer.music.load(self.bg_track_path)
+	# 		pygame.mixer.music.set_volume(self.music_volume)
+	# 		pygame.mixer.music.play(-1)
+	# 		self.game_music_running = 0
+		
 	def input(self):
 		# print(self.paused)
 		draw_pause_button(self)

@@ -32,8 +32,6 @@ class Game:
 
 def main():
     screen = pygame.display.set_mode(SCREEN_SIZE)
-    # pygame.display.set_caption("Intro")
-
     clock = pygame.time.Clock()
 
     # Create instances of each screen
@@ -59,6 +57,8 @@ def main():
     current_screen_index = 0
     menu_music_running = True
     intro_music_running = False
+    outro_music_running = False
+    game_music_running = False
     pygame.mixer.music.load('../audio/bg.mp3')
     pygame.mixer.music.play(-1)
 
@@ -69,6 +69,12 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
             if current_menu == 'menu':
+                if outro_music_running:
+                    pygame.mixer.music.stop()
+                    outro_music_running = False
+                if game_music_running:
+                    pygame.mixer.music.stop()
+                    game_music_running = False
                 if not menu_music_running:
                     menu_music_running = True
                     pygame.mixer.music.load('../audio/bg.mp3')
@@ -96,6 +102,13 @@ def main():
         elif current_menu == 'settings':
             settings_menu.draw(screen)
         elif current_menu == 'end':
+            if game_music_running:
+                pygame.mixer.music.stop()
+                game_music_running = False
+            if not outro_music_running:
+                pygame.mixer.music.load('../audio/outro_good.mp3')
+                pygame.mixer.music.play(-1)
+                outro_music_running = True
             end_screen.draw(screen)
         elif current_menu == 'intro' and current_screen_index < len(screens):
             screens[current_screen_index].render(screen)
@@ -111,6 +124,7 @@ def main():
                 pygame.mixer.music.stop()
                 intro_music_running = False
             game = Game(start_menu.characters[start_menu.selected_character], start_menu.difficulties[start_menu.selected_difficulty], settings_menu.music_volume, settings_menu.game_volume)
+            game_music_running = True
             game.run()
             current_menu = game.go_to
             current_screen_index = 0

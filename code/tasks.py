@@ -284,11 +284,11 @@ class Button:
         self.text = text
         self.color = color
         self.action = action
-        self.font = pygame.font.Font("../graphics/font/joystix.ttf", 24)
+        self.font = pygame.font.Font("../graphics/font/joystix.ttf", 30)
 
     def draw(self, screen):
         # pygame.draw.rect(screen, self.color, self.rect)
-        draw_text(self.text, self.font, 'white', screen, self.rect.x, self.rect.y, 2)
+        draw_text(self.text, self.font, self.color, screen, self.rect.x, self.rect.y, 2)
 
     def is_clicked(self, pos):
         return self.rect.collidepoint(pos)
@@ -300,7 +300,7 @@ class BookTask:
         self.pages = [["Page 1 text", "Ok boomer", "Hi Okay"], ["Page 2 text"], ["Page 3 text"]] # Example pages
         self.current_page = 0
         self.active = False
-        self.code = "6969" # Example code
+        self.code = "6969"
         self.user_input = ""
         self.font = pygame.font.Font("../graphics/font/joystix.ttf", 14)
 
