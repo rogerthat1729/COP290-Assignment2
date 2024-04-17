@@ -2,6 +2,7 @@ import pygame
 from random import choice
 import time
 from support import *
+from settings import *
 
 good_tasks = ["Take a nap", "Buy groceries", "Clean out the trash", "Do the dishes", "Talk on phone", "Do the laundry", 
               "Read a book", "Take a bath", "Go to balcony"]
@@ -27,7 +28,7 @@ def draw_pause_screen(level):
     surface = screen.copy()
     amt = 10
     scale = 1.0 / float(amt)
-    surf_size = (1600, 880)
+    surf_size = (WIDTH, HEIGHT)
     scale_size = (int(surf_size[0] * scale), int(surf_size[1] * scale))
     surf = pygame.transform.smoothscale(surface, scale_size)
     surf = pygame.transform.smoothscale(surf, surf_size)
@@ -38,10 +39,10 @@ def draw_pause_button(level):
     if level.paused:
         draw_pause_screen(level)
         pause_text = font.render("Paused.", True, 'white')
-        screen.blit(pause_text, (1500, 100))
+        screen.blit(pause_text, (WIDTH-100, 100))
 
     pause_image = pygame.image.load('../graphics/ui/pause.png')
-    pause_rect = pause_image.get_rect(center=(1550, 50))
+    pause_rect = pause_image.get_rect(center=(WIDTH-50, 50))
     level.pause_rect = pause_rect
     screen.blit(pause_image, pause_rect)
 
@@ -53,9 +54,12 @@ def change_to_task_image(level, task):
                 spr.active = 2
                 spr.update_image()
 
-def play_music(task):
+def play_music(task, level):
+    pygame.mixer.music.stop()
+    pygame.mixer.music.set_volume(level.game_volume/100)
     pygame.mixer.music.load(f'../audio/{task}.mp3')
     pygame.mixer.music.play()
+    pygame.mixer.music.set_volume(level.music_volume/100)
 
 def check_keypad_code(level):
     if level.phone_keypad_content == level.correct_code:

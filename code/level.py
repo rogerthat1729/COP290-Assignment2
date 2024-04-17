@@ -58,7 +58,7 @@ task_to_obj = {"Talk on phone":'telephone', "Go to balcony":'chair', "Clean out 
 difficulty_to_bad_task_wait = {'Easy':900, 'Medium':600, 'Hard':300}
 
 class Level:
-	def __init__(self, character, difficulty):
+	def __init__(self, character, difficulty, music_volume, game_volume):
 		# get the display surface 
 		self.display_surface = pygame.display.get_surface()
 		self.overlay = pygame.Surface(self.display_surface.get_size(), pygame.SRCALPHA)
@@ -85,6 +85,8 @@ class Level:
 		self.interact_time = None
 		self.interact_wait = 4
 		self.playing_music = False
+		self.playing_bg = True
+		self.bg_track_path = '../audio/bg.mp3'
 
 		self.phone_keypad_content = ""
 		self.phone_keypad_active = False
@@ -94,6 +96,9 @@ class Level:
 
 		self.pause_rect = pygame.Rect(1550, 50, 100, 100)
 		self.paused = False
+		
+		self.music_volume = music_volume
+		self.game_volume = game_volume
 
 		# sprite setup
 		self.create_map()
@@ -239,7 +244,7 @@ class Level:
 				fade_to_black(self)
 				change_to_task_image(self, 'bed')
 			if self.playing_music:
-				play_music(task_to_seq[self.task_list[0]])
+				play_music(task_to_seq[self.task_list[0]], self)
 				self.playing_music = False
 		else:
 			self.interact_time = None
@@ -254,6 +259,9 @@ class Level:
 					self.interact_time = None
 		else:
 			pygame.mixer.music.stop()
+		
+
+			# pygame.mixer.music.play('../audio/bg.mp3')
 			
 	
 	def activate_objects(self):

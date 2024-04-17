@@ -4,15 +4,17 @@ from level import Level
 from start import *
 from intro import *
 pygame.init()
+pygame.mixer.init()
+
+pygame.mixer.music.load('../audio/bg.mp3')
+pygame.mixer.music.play(-1) 
     
 class Game:
-    def __init__(self, character, difficulty):
+    def __init__(self, character, difficulty, music_volume, game_volume):
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF)  # Set fullscreen mode
-        pygame.display.set_caption('Dempression')
         self.clock = pygame.time.Clock()
-
-        self.level = Level(character, difficulty)
+        self.level = Level(character, difficulty, music_volume, game_volume)
 
     def run(self):
         self.screen.fill('black')
@@ -29,7 +31,7 @@ class Game:
 
 def main():
     screen = pygame.display.set_mode(SCREEN_SIZE)
-    pygame.display.set_caption("Intro")
+    # pygame.display.set_caption("Intro")
 
     clock = pygame.time.Clock()
 
@@ -81,8 +83,11 @@ def main():
         elif current_menu == 'intro' and current_screen_index < len(screens):
             screens[current_screen_index].render(screen)
         elif current_menu == 'intro' and current_screen_index >= len(screens):
-            game = Game(start_menu.characters[start_menu.selected_character], start_menu.difficulties[start_menu.selected_difficulty])
+            game = Game(start_menu.characters[start_menu.selected_character], start_menu.difficulties[start_menu.selected_difficulty], settings_menu.music_volume, settings_menu.game_volume)
             game.run()
+        
+        if current_menu=='intro' and pygame.mixer.music.get_busy():
+            pygame.mixer.music.stop()
         pygame.display.flip()
         clock.tick(60)
     sys.exit()
