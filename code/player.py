@@ -3,6 +3,7 @@ from settings import *
 from tasks import *
 # import sys
 from support import import_folder
+from settings import *
 # import time
 
 all_tasks = ["Talk on phone", "Go to balcony", "Clean your room"]

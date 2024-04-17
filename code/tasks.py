@@ -1,6 +1,7 @@
 import pygame
 from random import choice
 import time
+import sys
 from support import *
 from settings import *
 
@@ -20,7 +21,7 @@ notes_font = pygame.font.Font(None, 40)
 def fade_to_black(level):
     overlay = pygame.Surface(level.display_surface.get_size(), pygame.SRCALPHA)
     color = int(((time.time() - level.interact_time)/level.interact_wait)*255)
-    overlay.fill((0, 0, 0, color))  # Semi-transparent black
+    overlay.fill((0, 0, 0, color))
     level.display_surface.blit(overlay, (0, 0))
 
 def draw_pause_screen(level):
@@ -33,6 +34,26 @@ def draw_pause_screen(level):
     surf = pygame.transform.smoothscale(surface, scale_size)
     surf = pygame.transform.smoothscale(surf, surf_size)
     screen.blit(surf, (0, 0))
+
+    resume_button = Button((WIDTH - 200) // 2, HEIGHT // 2 - 100, 200, 50, "Resume", (0, 255, 0))
+    main_menu_button = Button((WIDTH - 200) // 2, HEIGHT // 2, 200, 50, "Main Menu", (0, 255, 0))
+    exit_button = Button((WIDTH - 200) // 2, HEIGHT // 2 + 100, 200, 50, "Exit", (255, 0, 0))
+
+    # Draw buttons
+    resume_button.draw(level.display_surface)
+    main_menu_button.draw(level.display_surface)
+    exit_button.draw(level.display_surface)
+
+    if level.paused:
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if resume_button.is_clicked(event.pos):
+                    level.paused = False
+                elif main_menu_button.is_clicked(event.pos):
+                    level.go_to_menu = True
+                elif exit_button.is_clicked(event.pos):
+                    pygame.quit()
+                    sys.exit()
 
 def draw_pause_button(level):
     screen = level.display_surface
@@ -59,7 +80,7 @@ def play_music(task, level):
     pygame.mixer.music.set_volume(level.game_volume/100)
     pygame.mixer.music.load(f'../audio/{task}.mp3')
     pygame.mixer.music.play()
-    pygame.mixer.music.set_volume(level.music_volume/100)
+    # pygame.mixer.music.set_volume(level.music_volume/100)
 
 def check_keypad_code(level):
     if level.phone_keypad_content == level.correct_code:
@@ -141,35 +162,35 @@ def display_task(level, task, start_time, total_time=3, content=""):
     screen = level.display_surface
     if task=='Talk on phone':
         keypad_image = pygame.image.load('../graphics/tasks/telephone.png')
-        keypad_rect = keypad_image.get_rect(center=(700, 400))
+        keypad_rect = keypad_image.get_rect(center=((700/1600)*WIDTH, (400/1600)*HEIGHT))
         screen.blit(keypad_image, keypad_rect)
 
         if len(content)==0:
             text_surface = keypad_font2.render("Hint:", True, 'black')
-            screen.blit(text_surface, (705, 280))
+            screen.blit(text_surface, ((705/1600)*WIDTH, (280/880)*HEIGHT))
             text_surface1 = keypad_font2.render("Check the notes", True, 'black')
-            screen.blit(text_surface1, (705, 300))
+            screen.blit(text_surface1, ((705/1600)*WIDTH, (300/880)*HEIGHT))
         else:
             text_surface = font.render(content, True, (0, 0, 0))
-            screen.blit(text_surface, (725, 280))
+            screen.blit(text_surface, ((725/1600)*WIDTH, (280/880)*HEIGHT))
     elif task=='Check the notes':
         notes_image = pygame.image.load('../graphics/tasks/notes.png')
-        notes_rect = notes_image.get_rect(center=(700, 400))
+        notes_rect = notes_image.get_rect(center=((700/1600)*WIDTH, (400/880)*HEIGHT))
         screen.blit(notes_image, notes_rect)
 
         text = notes_font.render("Telephone code", True, 'red')
-        text_rect = text.get_rect(center=(700, 350))
+        text_rect = text.get_rect(center=((700/1600)*WIDTH, (350/880)*HEIGHT))
         screen.blit(text, text_rect)
 
         code = notes_font.render(f"{level.correct_code}", True, 'green')
-        code_rect = code.get_rect(center=(700, 400))
+        code_rect = code.get_rect(center=((700/1600)*WIDTH, (400/880)*HEIGHT))
         screen.blit(code, code_rect)
     else:
         if start_time:
             elapsed_time = time.time() - start_time
             bar_length = 200
             bar_height = 40
-            bar_position = (700, 200)
+            bar_position = ((700/1600)*WIDTH, (200/880)*HEIGHT)
             fill_length = (elapsed_time / total_time) * bar_length
 
             text = font.render("Task Progress", True, 'white')
@@ -187,7 +208,7 @@ def display_task(level, task, start_time, total_time=3, content=""):
 
                 if(frame_index<5):
                     sink_image = sink_animations[frame_index]
-                    sink_rect = sink_image.get_rect(center=(800, 400))
+                    sink_rect = sink_image.get_rect(center=((800/1600)*WIDTH, (400/880)*HEIGHT))
                     screen.blit(sink_image, sink_rect)
             elif task=='Do the laundry':
                 wm_animations = import_folder('../graphics/tasks/washing_machine')
@@ -195,7 +216,7 @@ def display_task(level, task, start_time, total_time=3, content=""):
 
                 if(frame_index<3):
                     wm_image = wm_animations[frame_index]
-                    wm_rect = wm_image.get_rect(center=(800, 450))
+                    wm_rect = wm_image.get_rect(center=((800/1600)*WIDTH, (450/880)*HEIGHT))
                     screen.blit(wm_image, wm_rect)
 
             if elapsed_time >= total_time:
@@ -227,8 +248,8 @@ class Popup:
         width += 20
         height += 20
 
-        x = 800 - width // 2
-        y = 440 - height // 2
+        x = 960 - width // 2
+        y = 340 - height // 2
 
         popup_rect = pygame.Rect(x, y, width, height)
         pygame.draw.rect(screen, 'white', popup_rect)
@@ -240,7 +261,23 @@ class Popup:
             line_surface = self.font.render(line, True, 'black')
             screen.blit(line_surface, (x+10, y))
             y += line_surface.get_size()[1]
-        
 
     def toggle(self):
         self.active = not self.active
+
+
+class Button:
+    def __init__(self, x, y, width, height, text, color, action=None):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.text = text
+        self.color = color
+        self.action = action
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.color, self.rect)
+        text_surface = font.render(self.text, True, 'black')
+        text_rect = text_surface.get_rect(center=self.rect.center)
+        screen.blit(text_surface, text_rect)
+
+    def is_clicked(self, pos):
+        return self.rect.collidepoint(pos)

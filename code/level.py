@@ -67,6 +67,8 @@ class Level:
 		self.visible_sprites = YSortCameraGroup()
 		self.obstacle_sprites = pygame.sprite.Group()
 
+		self.go_to_menu = False
+
 		#tasks
 		self.happy = 50
 		self.task_list = good_tasks.copy()
@@ -94,7 +96,7 @@ class Level:
 
 		self.notes_active = False
 
-		self.pause_rect = pygame.Rect(1550, 50, 100, 100)
+		self.pause_rect = pygame.Rect((1550/1600)*WIDTH, (50/880)*HEIGHT, 100, 100)
 		self.paused = False
 		
 		self.music_volume = music_volume
@@ -293,11 +295,14 @@ class Level:
 			show_popup(self, ["You won!"])
 			self.play = False
 		
-	def run(self):
+	def run(self, game):
 		self.visible_sprites.custom_draw(self.player)
 		self.visible_sprites.update()
 		render_tasks(self)
 		self.input()
+		if self.go_to_menu:
+			game.go_to_menu = True
+			return
 		if(not self.paused):
 			self.activate_objects() 
 			self.handle_popup()

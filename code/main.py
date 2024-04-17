@@ -5,9 +5,6 @@ from start import *
 from intro import *
 pygame.init()
 pygame.mixer.init()
-
-pygame.mixer.music.load('../audio/bg.mp3')
-pygame.mixer.music.play(-1) 
     
 class Game:
     def __init__(self, character, difficulty, music_volume, game_volume):
@@ -15,6 +12,7 @@ class Game:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF)  # Set fullscreen mode
         self.clock = pygame.time.Clock()
         self.level = Level(character, difficulty, music_volume, game_volume)
+        self.go_to_menu = False
 
     def run(self):
         self.screen.fill('black')
@@ -25,7 +23,10 @@ class Game:
                     pygame.quit()
                     sys.exit()
             self.screen.fill('black')
-            self.level.run()
+            self.level.run(self)
+            # print(self.game_to_menu)
+            if self.go_to_menu:
+                return
             pygame.display.flip()
             self.clock.tick(FPS)
 
@@ -52,6 +53,10 @@ def main():
     current_menu = 'menu'
     screens = [intro_screen1, intro_screen2, intro_screen3, intro_screen4, intro_screen5, intro_screen6, intro_screen7, intro_screen8, intro_screen9]
     current_screen_index = 0
+    menu_music_running = True
+    intro_music_running = False
+    pygame.mixer.music.load('../audio/bg.mp3')
+    pygame.mixer.music.play(-1) # Play music indefinitely
 
     running = True
     while running:
@@ -60,6 +65,10 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
             if current_menu == 'menu':
+                if not menu_music_running:
+                    menu_music_running = True
+                    pygame.mixer.music.load('../audio/bg.mp3')
+                    pygame.mixer.music.play(-1)     
                 if menu.handle_event(event) == 'start':
                     current_menu = 'start'
                 elif menu.handle_event(event) == 'settings':
@@ -82,12 +91,21 @@ def main():
             settings_menu.draw(screen)
         elif current_menu == 'intro' and current_screen_index < len(screens):
             screens[current_screen_index].render(screen)
+            if menu_music_running:
+                pygame.mixer.music.stop()
+                menu_music_running = False
+            if not intro_music_running:
+                pygame.mixer.music.load('../audio/intro.mp3')
+                pygame.mixer.music.play(-1)
+                intro_music_running = True
         elif current_menu == 'intro' and current_screen_index >= len(screens):
+            if intro_music_running:
+                pygame.mixer.music.stop()
+                intro_music_running = False
             game = Game(start_menu.characters[start_menu.selected_character], start_menu.difficulties[start_menu.selected_difficulty], settings_menu.music_volume, settings_menu.game_volume)
             game.run()
-        
-        if current_menu=='intro' and pygame.mixer.music.get_busy():
-            pygame.mixer.music.stop()
+            current_menu = 'menu'
+            current_screen_index = 0
         pygame.display.flip()
         clock.tick(60)
     sys.exit()
