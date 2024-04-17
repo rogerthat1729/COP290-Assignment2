@@ -103,6 +103,8 @@ class Level:
 		self.music_volume = music_volume
 		self.game_volume = game_volume
 
+		self.booktask = BookTask(self)
+		self.book_active = False
 		# sprite setup
 		self.create_map()
 
@@ -198,8 +200,11 @@ class Level:
 		else:
 			self.player.direction.x = 0
 			self.player.direction.y = 0
+
 		
+		self.booktask.render()
 		for event in self.events:
+			self.booktask.handle_input(event)
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				sys.exit()
@@ -208,6 +213,9 @@ class Level:
 					self.paused = not self.paused
 			elif (not self.paused):
 				if event.type == pygame.KEYDOWN and (not self.player.popup.active):
+					if event.key == pygame.K_b:
+						if self.task_list[0]=='Read a book' and check_for_object(self.nearest_object, 'books') and not self.book_active:
+							self.booktask.active = True
 					if event.key == pygame.K_p:
 						if self.task_list[0]=='Talk on phone' and check_for_object(self.nearest_object, 'telephone') and not self.phone_keypad_active:
 							self.phone_keypad_active = True
@@ -237,21 +245,25 @@ class Level:
 	def handle_tasks(self):
 		if self.notes_active:
 			display_task(self, 'Check the notes', None)
+
+		if self.player.done_task == 0 and check_for_object(self.nearest_object, task_to_obj[self.task_list[0]]):
+			if (self.interact_time or self.phone_keypad_active):
+				display_task(self, self.task_list[0], self.interact_time, self.interact_wait, self.phone_keypad_content)
+				if self.task_list[0]=='Buy groceries':
+					self.player.show_player = False
+				elif self.task_list[0]=='Take a nap':
+					self.player.show_player = False
+					fade_to_black(self)
+					change_to_task_image(self, 'bed')
+				if self.playing_music:
+					play_music(task_to_seq[self.task_list[0]], self)
+					self.playing_music = False
+			else:
+				self.interact_time = None
+				self.player.show_player = True
 		
-		if self.player.done_task == 0 and check_for_object(self.nearest_object, task_to_obj[self.task_list[0]]) and (self.interact_time or self.phone_keypad_active):
-			display_task(self, self.task_list[0], self.interact_time, self.interact_wait, self.phone_keypad_content)
-			if self.task_list[0]=='Buy groceries':
-				self.player.show_player = False
-			elif self.task_list[0]=='Take a nap':
-				self.player.show_player = False
-				fade_to_black(self)
-				change_to_task_image(self, 'bed')
-			if self.playing_music:
-				play_music(task_to_seq[self.task_list[0]], self)
-				self.playing_music = False
-		else:
-			self.interact_time = None
-			self.player.show_player = True
+		if self.player.done_task == 1 or self.task_list[0] != 'Read a book' or not check_for_object(self.nearest_object, 'books'):
+			self.booktask.active = False
 
 		if self.interact_time:
 			if self.task_list[0] == 'Talk on phone':

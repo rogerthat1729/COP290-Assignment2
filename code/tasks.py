@@ -5,8 +5,8 @@ import sys
 from support import *
 from settings import *
 
-good_tasks = ["Take a nap", "Buy groceries", "Clean out the trash", "Do the dishes", "Do the laundry", 
-              "Read a book", "Take a bath", "Go to balcony", "Talk on phone"]
+good_tasks = ["Read a book", "Take a nap", "Buy groceries", "Clean out the trash", "Do the dishes", "Do the laundry", 
+               "Take a bath", "Go to balcony", "Talk on phone"]
 task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out the trash":"trash", "Take a bath":"bath", "Do the dishes":"sink", 
                "Read a book":"book", 'Do the laundry':"wash", "Buy groceries":'door', "Take a nap":"bed"}
 phone_codes = ["69420", "43210", "98543", "87658", "38961"]
@@ -292,3 +292,70 @@ class Button:
 
     def is_clicked(self, pos):
         return self.rect.collidepoint(pos)
+
+class BookTask:
+    def __init__(self, level):
+        self.book_image = pygame.image.load('../graphics/tasks/books/book.png')
+        self.level = level
+        self.pages = [["Page 1 text", "Ok boomer", "Hi Okay"], ["Page 2 text"], ["Page 3 text"]] # Example pages
+        self.current_page = 0
+        self.active = False
+        self.code = "6969" # Example code
+        self.user_input = ""
+        self.font = pygame.font.Font("../graphics/font/joystix.ttf", 14)
+
+    def start(self):
+        self.active = True
+
+    def render(self):
+        if not self.active:
+            return
+        # Render the book image with text
+        self.level.display_surface.blit(self.book_image, (WIDTH // 2 - self.book_image.get_width() // 2, HEIGHT // 2 - self.book_image.get_height() // 2))
+        self.render_text()
+
+        # If on the last page, render the textbox for code input
+        if self.current_page == len(self.pages) - 1:
+            pygame.draw.rect(self.level.display_surface, 'white', (WIDTH // 2 + 10, HEIGHT // 2 + 120, 150, 30))
+            pygame.draw.rect(self.level.display_surface, 'black', (WIDTH // 2 + 10, HEIGHT // 2 + 120, 150, 30), 2)
+            input_surface = self.font.render(self.user_input, True, (0, 0, 0))
+            self.level.display_surface.blit(input_surface, (WIDTH // 2 + 15, HEIGHT // 2 + 125))
+        
+    def render_text(self):
+        y = HEIGHT//2 - self.book_image.get_height()//2 + 90
+        x = WIDTH//2 - self.book_image.get_width()//2 + 100
+        for line in self.pages[self.current_page]:
+            text_surface = self.font.render(line, True, 'black')
+            self.level.display_surface.blit(text_surface, (x, y))
+            y += text_surface.get_height() + 5
+
+    def handle_input(self, event):
+        if not self.active:
+            return
+        
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RIGHT:
+                if self.current_page < len(self.pages) - 1:
+                    self.current_page += 1
+            elif event.key == pygame.K_LEFT:
+                if self.current_page > 0:
+                    self.current_page -= 1
+            elif event.key == pygame.K_ESCAPE:
+                self.active = False
+                self.current_page = 0
+                self.user_input = ""
+            elif event.key == pygame.K_RETURN and self.current_page == len(self.pages) - 1:
+                if self.user_input == self.code:
+                    self.level.player.done_task = 1
+                    print("Task completed")
+                else:
+                    print("Incorrect code")
+                self.current_page = 0
+                self.user_input = ""
+                self.active = False
+            elif event.unicode.isalnum():
+                if len(self.user_input) < 4:
+                    self.user_input += event.unicode
+            elif event.key == pygame.K_BACKSPACE:
+                if len(self.user_input) > 0:
+                    self.user_input = self.user_input[:-1]
