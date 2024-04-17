@@ -70,8 +70,8 @@ class Level:
 		self.go_to_menu = False
 
 		#tasks
-		self.happy = 50
-		self.recovery = 0
+		self.happy = 90
+		self.recovery = 95
 		self.task_list = good_tasks.copy()
 		self.bad_task = ""
 		self.player = Player((1980,1500),[self.visible_sprites],self.obstacle_sprites, character)

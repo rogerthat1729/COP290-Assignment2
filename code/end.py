@@ -7,6 +7,8 @@ from tasks import Button
 class EndScreen:
     def __init__(self, win):
         self.win = win
+        self.bg = pygame.image.load("../graphics/endscene/goodend.png")
+        self.bg = pygame.transform.scale(self.bg, (WIDTH, HEIGHT))
         self.font = pygame.font.Font("../graphics/font/joystix.ttf", 48)
         self.replay_button = Button(WIDTH // 2 - 100, HEIGHT // 2 + 100, 200, 50, 'Replay', 'green')
         self.exit_button = Button(WIDTH//2 - 100, HEIGHT//2 + 200, 200, 50, 'Exit', 'red')
@@ -16,6 +18,7 @@ class EndScreen:
             message = "Congratulations for winning the game"
         else:
             message = "Please try again"
+        screen.blit(self.bg, (0, 0))
         draw_text(message, self.font, (255, 255, 255), screen, 250, HEIGHT // 2 - 50)
         self.replay_button.draw(screen)
         self.exit_button.draw(screen)
