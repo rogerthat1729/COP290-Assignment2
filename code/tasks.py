@@ -5,8 +5,8 @@ import sys
 from support import *
 from settings import *
 
-good_tasks = ["Talk on phone", "Take a nap", "Buy groceries", "Clean out the trash", "Do the dishes", "Do the laundry", 
-              "Read a book", "Take a bath", "Go to balcony"]
+good_tasks = ["Take a nap", "Buy groceries", "Clean out the trash", "Do the dishes", "Do the laundry", 
+              "Read a book", "Take a bath", "Go to balcony", "Talk on phone"]
 task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out the trash":"trash", "Take a bath":"bath", "Do the dishes":"sink", 
                "Read a book":"book", 'Do the laundry':"wash", "Buy groceries":'door', "Take a nap":"bed"}
 phone_codes = ["69420", "43210", "98543", "87658", "38961"]
@@ -94,10 +94,10 @@ def check_keypad_code(level):
 
 def draw_health_bar(level, text, pos):
     screen = level.display_surface
-    current_level = level.happy
+    current_level = int(level.happy)
     current_text = f"Mental Health: {current_level}"
     if text == "recovery":
-        current_level = level.recovery
+        current_level = int(level.recovery)
         current_text = f"Recovery: {current_level}"
     y = pos
     happy_surf = font.render(current_text, True, 'white')

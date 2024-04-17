@@ -208,7 +208,6 @@ class Level:
 					self.paused = not self.paused
 			elif (not self.paused):
 				if event.type == pygame.KEYDOWN and (not self.player.popup.active):
-					# print("not paused")
 					if event.key == pygame.K_p:
 						if self.task_list[0]=='Talk on phone' and check_for_object(self.nearest_object, 'telephone') and not self.phone_keypad_active:
 							self.phone_keypad_active = True
@@ -281,8 +280,8 @@ class Level:
 				spr.update_image()
 	
 	def update_recovery(self):
-		if(self.happy >= 60):
-			self.recovery = int(min(100, self.recovery+0.01))
+		if(self.happy >= 80):
+			self.recovery = min(100, self.recovery+0.05)
 	
 	def check_near_object(self, objname):
 		for sprite in self.visible_sprites.sprites():

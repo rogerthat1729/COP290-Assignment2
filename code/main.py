@@ -95,6 +95,8 @@ def main():
             start_menu.draw(screen)
         elif current_menu == 'settings':
             settings_menu.draw(screen)
+        elif current_menu == 'end':
+            end_screen.draw(screen)
         elif current_menu == 'intro' and current_screen_index < len(screens):
             screens[current_screen_index].render(screen)
             if menu_music_running:
