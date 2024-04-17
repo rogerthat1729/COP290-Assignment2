@@ -2,9 +2,12 @@ import pygame
 import sys
 from settings import *
 
-FONT = pygame.font.Font("../graphics/font/joystix.ttf", 18)
+FONT = pygame.font.Font("../graphics/font/joystix.ttf", 24)
 GRAY = (200, 200, 200)
 WHITE = (255, 255, 255)
+
+mid_width = 910
+mid_height = 490
 
 def draw_text(text, font, color, surface, x, y):
     textobj = font.render(text, True, color)
@@ -15,6 +18,9 @@ def draw_text(text, font, color, surface, x, y):
 def draw_button(text, rect, color, surface):
     pygame.draw.rect(surface, color, rect)
     draw_text(text, FONT, 'white', surface, rect.x + 20, rect.y + 10)
+
+def draw_title(text, surface):
+    draw_text(text, pygame.font.Font("../graphics/font/joystix.ttf", 75), (255, 255, 0), surface, mid_width-230, 100)
 
 
 class Menu:
@@ -30,13 +36,18 @@ class Menu:
 
     def create_buttons(self):
         for menu_name, options in self.menus.items():
-            y = 100
+            y = 400
             for option in options:
-                rect = pygame.Rect(750, y, 200, 50)
+                rect = pygame.Rect(mid_width-50, y, 200, 50)
                 self.buttons[menu_name].append((option, rect))
                 y += 60
 
     def draw(self, surface):
+        pygame.display.set_caption("Petrichor")
+        bg = pygame.image.load('../graphics/ui/bg.png')
+        surface.blit(bg, (0, 0))
+        draw_title("Petrichor", surface)
+        draw_text("Main Menu", pygame.font.Font("../graphics/font/joystix.ttf", 48), 'white', surface, mid_width-130, 250)
         for text, rect in self.buttons[self.current_menu]:
             draw_button(text, rect, 'grey', surface)
 
@@ -57,36 +68,42 @@ class StartMenu(Menu):
         self.difficulties = ['Easy', 'Medium', 'Hard']
         self.selected_character = 0
         self.selected_difficulty = 0
-        self.start_game_rect = pygame.Rect(700, 400, 200, 50)
-        self.back_rect = pygame.Rect(700, 500, 100, 50)
+        self.start_game_rect = pygame.Rect(mid_width-60, 650, 230, 50)
+        self.back_rect = pygame.Rect(mid_width, 750, 120, 50)
 
         # Load images and set positions
-        self.character_positions = [(550, 150), (950, 150)]
-        self.difficulty_positions = [(550, 300), (750, 300), (950, 300)]
+        self.character_positions = [(mid_width-170, 400), (mid_width+230, 400)]
+        self.difficulty_positions = [(mid_width-200, 580), (mid_width, 580), (mid_width+200, 580)]
 
     def draw(self, surface):
+        # pygame.display.set_caption("Petrichor")
+        bg = pygame.image.load('../graphics/ui/bg.png')
+        surface.blit(bg, (0, 0))
+        draw_title("Petrichor", surface)
+        draw_text("Start Menu", pygame.font.Font("../graphics/font/joystix.ttf", 48), 'white', surface, mid_width-130, 250)
         self.draw_characters(surface)
         self.draw_difficulties(surface)
         self.draw_buttons(surface)
 
     def draw_characters(self, surface):
         char_text = FONT.render("Select Character", True, (255, 255, 255))
-        surface.blit(char_text, (700, 100))
+        surface.blit(char_text, (mid_width-90, 350))
         for i, image in enumerate(self.character_images):
             rect = pygame.Rect(*self.character_positions[i], image.get_width(), image.get_height())
-            surface.blit(image, rect.topleft)
             if i == self.selected_character:
-                pygame.draw.rect(surface, (255, 0, 0), rect, 3)  # Draw a red rectangle around the selected character
+                pygame.draw.rect(surface, 'yellow', rect)  # Draw a red rectangle around the selected character
+            surface.blit(image, rect.topleft)
 
     def draw_difficulties(self, surface):
         diff_text = FONT.render("Select Difficulty", True, (255, 255, 255))
-        surface.blit(diff_text, (700, 250))
+        surface.blit(diff_text, (mid_width-100, 530))
         for i, difficulty in enumerate(self.difficulties):
             text = FONT.render(difficulty, True, (255, 255, 255))
-            rect = pygame.Rect(*self.difficulty_positions[i], 100, 30)
-            surface.blit(text, rect.topleft)
+            text_rect = text.get_rect()
+            rect = pygame.Rect(*self.difficulty_positions[i], text_rect.width, text_rect.height)
             if i == self.selected_difficulty:
-                pygame.draw.rect(surface, (255, 0, 0), rect, 3)
+                pygame.draw.rect(surface, 'brown', rect)
+            surface.blit(text, rect.topleft)
     
     def draw_buttons(self, surface):
         draw_button('Start Game', self.start_game_rect, 'grey', surface)
@@ -118,22 +135,26 @@ class SettingsMenu(Menu):
     def __init__(self):
         self.music_volume = 50  # Default volume
         self.game_volume = 50  # Default volume
-        self.slider_positions = {'music': (750, 150), 'game': (750, 250)}
-        self.sliders = {'music': pygame.Rect(750, 150, 200, 20), 'game': pygame.Rect(750, 250, 200, 20)}
+        # self.slider_positions = {'music': (mid_width, 350), 'game': (mid_width, 450)}
+        self.sliders = {'music': pygame.Rect(mid_width-20, 450, 200, 20), 'game': pygame.Rect(mid_width-20, 550, 200, 20)}
+        self.back_rect = pygame.Rect(mid_width, 650, 120, 50) 
 
     def draw(self, surface):
+        bg = pygame.image.load('../graphics/ui/bg.png')
+        surface.blit(bg, (0, 0))
+        draw_title("Petrichor", surface)
+        draw_text("Settings Menu", pygame.font.Font("../graphics/font/joystix.ttf", 48), 'white', surface, mid_width-180, 250)
         # Draw each slider
         music_text = FONT.render("Music Volume", True, (255, 255, 255))
         game_text = FONT.render("In-game Volume", True, (255, 255, 255))
-        surface.blit(music_text, (700, 100))
-        surface.blit(game_text, (700, 200))
+        surface.blit(music_text, (mid_width-50, 400))
+        surface.blit(game_text, (mid_width-70, 500))
         for key, rect in self.sliders.items():
             pygame.draw.rect(surface, GRAY, rect)  # The slider background
             pygame.draw.rect(surface, WHITE, (rect.x, rect.y, self.music_volume if key == 'music' else self.game_volume, rect.height))  # The volume level
 
         # Draw back button
-        back_button = pygame.Rect(700, 350, 100, 50)
-        draw_button("Back", back_button, GRAY, surface)
+        draw_button("Back", self.back_rect, GRAY, surface)
     
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -143,13 +164,11 @@ class SettingsMenu(Menu):
                 if rect.collidepoint(pos):
                     if key == 'music':
                         self.music_volume = pos[0] - rect.x
+                        pygame.mixer.music.set_volume(self.music_volume/100)
                     elif key == 'game':
                         self.game_volume = pos[0] - rect.x
 
-            # Check if the back button is clicked
-            back_button = pygame.Rect(100, 350, 100, 50)
-            if back_button.collidepoint(pos):
+            if self.back_rect.collidepoint(pos):
                 return "menu"
-        return "settings"  # Assuming the game class can manage which menu is active
-
+        return "settings"
 

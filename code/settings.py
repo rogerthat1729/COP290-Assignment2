@@ -1,6 +1,6 @@
 # game setup
-WIDTH    = 1600
-HEIGHT   = 880
+WIDTH    = 1920
+HEIGHT   = 1080
 FPS      = 60
 TILESIZE = 64
 SCREEN_SIZE = (WIDTH, HEIGHT)
