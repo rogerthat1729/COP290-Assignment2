@@ -45,18 +45,21 @@ def main():
     intro_screen6 = IntroScreen("Susan has struggled to find her footing. The grief has consumed her, leaving her hopeless.", "../graphics/intro/sad.png")  
     intro_screen7 = IntroScreen("She has isolated herself from everyone, unable to find the strength to engage with the world around her.", "../graphics/intro/sad2.png") 
     intro_screen8 = IntroScreen("The darkness and despair had become unbearable for Susan. She attempted to take her own life, ", "../graphics/intro/rope.png")
-    intro_screen9 = IntroScreen("But fate had other plans for Susan. The rope she had fashioned was not properly secured, and Susan found herself struggling for breath but still alive. As she lay on the floor, gasping for air, her eyes landed on a framed photograph of her beloved brother Ethan. Seeing his warm smile and kind eyes seemed to cut through the fog of her depression, igniting a glimmer of hope within her.", "../graphics/intro/hope.png")
+    intro_screen9 = IntroScreen("But fate had other plans for Susan...", "../graphics/intro/rope.png")
+    intro_screen10 = IntroScreen("The rope she had fashioned was not properly secured, and Susan found herself struggling for breath but still alive.", "../graphics/intro/rope.png")
+    intro_screen11 = IntroScreen("As she lay on the floor, gasping for air, her eyes landed on a framed photograph of her beloved brother Ethan.", "../graphics/intro/hope.png")
+    intro_screen12 = IntroScreen("His warm smile and kind eyes seemed to cut through the fog of her depression, igniting a glimmer of hope within her.", "../graphics/intro/hope.png")
 
     menu = Menu()
     start_menu = StartMenu()
     settings_menu = SettingsMenu()
     current_menu = 'menu'
-    screens = [intro_screen1, intro_screen2, intro_screen3, intro_screen4, intro_screen5, intro_screen6, intro_screen7, intro_screen8, intro_screen9]
+    screens = [intro_screen1, intro_screen2, intro_screen3, intro_screen4, intro_screen5, intro_screen6, intro_screen7, intro_screen8, intro_screen9, intro_screen10, intro_screen11, intro_screen12]
     current_screen_index = 0
     menu_music_running = True
     intro_music_running = False
     pygame.mixer.music.load('../audio/bg.mp3')
-    pygame.mixer.music.play(-1) # Play music indefinitely
+    pygame.mixer.music.play(-1)
 
     running = True
     while running:
