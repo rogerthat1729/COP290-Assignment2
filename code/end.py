@@ -19,7 +19,7 @@ class EndScreen:
         else:
             message = "Please try again"
         screen.blit(self.bg, (0, 0))
-        draw_text(message, self.font, (255, 255, 255), screen, 250, HEIGHT // 2 - 50)
+        draw_text(message, self.font, 'white', screen, 250, HEIGHT // 2 - 50)
         self.replay_button.draw(screen)
         self.exit_button.draw(screen)
 

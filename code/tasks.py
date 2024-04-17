@@ -4,6 +4,7 @@ import time
 import sys
 from support import *
 from settings import *
+from start import *
 
 good_tasks = ["Read a book", "Take a nap", "Buy groceries", "Clean out the trash", "Do the dishes", "Do the laundry", 
                "Take a bath", "Go to balcony", "Talk on phone"]
@@ -13,6 +14,7 @@ phone_codes = ["69420", "43210", "98543", "87658", "38961"]
 task_to_points = {"Talk on phone": 5, "Go to balcony": 10, "Clean out the trash": 5, "Take a bath": 10, "Do the dishes": 15, 
                     "Read a book": 10, 'Do the laundry': 15, 'Buy groceries':10, "Take a nap": 10}
 
+FONT = pygame.font.Font("../graphics/font/joystix.ttf", 24)
 GRAY = (200, 200, 200)
 
 pygame.init()
@@ -285,10 +287,8 @@ class Button:
         self.font = pygame.font.Font("../graphics/font/joystix.ttf", 24)
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect)
-        text_surface = self.font.render(self.text, True, 'black')
-        text_rect = text_surface.get_rect(center=self.rect.center)
-        screen.blit(text_surface, text_rect)
+        # pygame.draw.rect(screen, self.color, self.rect)
+        draw_text(self.text, self.font, 'white', screen, self.rect.x, self.rect.y, 2)
 
     def is_clicked(self, pos):
         return self.rect.collidepoint(pos)

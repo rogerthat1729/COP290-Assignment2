@@ -315,10 +315,10 @@ class Level:
 		self.visible_sprites.update()
 		render_tasks(self)
 		self.input()
-		self.update_recovery()
-		self.check_win_or_lose(game)
 		self.check_menu(game)
 		if(not self.paused):
+			self.update_recovery()
+			self.check_win_or_lose(game)
 			self.handle_tasks()
 			self.activate_objects() 
 			self.handle_popup()
