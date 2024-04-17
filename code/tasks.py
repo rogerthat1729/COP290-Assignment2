@@ -5,7 +5,7 @@ import sys
 from support import *
 from settings import *
 
-good_tasks = ["Take a nap", "Buy groceries", "Clean out the trash", "Do the dishes", "Talk on phone", "Do the laundry", 
+good_tasks = ["Talk on phone", "Take a nap", "Buy groceries", "Clean out the trash", "Do the dishes", "Do the laundry", 
               "Read a book", "Take a bath", "Go to balcony"]
 task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out the trash":"trash", "Take a bath":"bath", "Do the dishes":"sink", 
                "Read a book":"book", 'Do the laundry':"wash", "Buy groceries":'door', "Take a nap":"bed"}
@@ -13,16 +13,19 @@ phone_codes = ["69420", "43210", "98543", "87658", "38961"]
 task_to_points = {"Talk on phone": 5, "Go to balcony": 10, "Clean out the trash": 5, "Take a bath": 10, "Do the dishes": 15, 
                     "Read a book": 10, 'Do the laundry': 15, 'Buy groceries':10, "Take a nap": 10}
 
+GRAY = (200, 200, 200)
+
 pygame.init()
 font = pygame.font.Font('../graphics/font/joystix.ttf',18)
 keypad_font2 = pygame.font.Font(None,20)
 notes_font = pygame.font.Font(None, 40)
 
 def fade_to_black(level):
-    overlay = pygame.Surface(level.display_surface.get_size(), pygame.SRCALPHA)
-    color = int(((time.time() - level.interact_time)/level.interact_wait)*255)
-    overlay.fill((0, 0, 0, color))
-    level.display_surface.blit(overlay, (0, 0))
+    if level.interact_time:
+        overlay = pygame.Surface(level.display_surface.get_size(), pygame.SRCALPHA)
+        color = int(((time.time() - level.interact_time)/level.interact_wait)*255)
+        overlay.fill((0, 0, 0, color))
+        level.display_surface.blit(overlay, (0, 0))
 
 def draw_pause_screen(level):
     screen = level.display_surface
@@ -35,9 +38,9 @@ def draw_pause_screen(level):
     surf = pygame.transform.smoothscale(surf, surf_size)
     screen.blit(surf, (0, 0))
 
-    resume_button = Button((WIDTH - 200) // 2, HEIGHT // 2 - 100, 200, 50, "Resume", (0, 255, 0))
-    main_menu_button = Button((WIDTH - 200) // 2, HEIGHT // 2, 200, 50, "Main Menu", (0, 255, 0))
-    exit_button = Button((WIDTH - 200) // 2, HEIGHT // 2 + 100, 200, 50, "Exit", (255, 0, 0))
+    resume_button = Button((WIDTH - 200) // 2, HEIGHT // 2 - 100, 200, 50, "Resume", 'green')
+    main_menu_button = Button((WIDTH - 200) // 2, HEIGHT // 2, 200, 50, "Main Menu", 'green')
+    exit_button = Button((WIDTH - 200) // 2, HEIGHT // 2 + 100, 200, 50, "Exit", 'red')
 
     # Draw buttons
     resume_button.draw(level.display_surface)
@@ -89,22 +92,27 @@ def check_keypad_code(level):
     else:
         level.phone_keypad_content = ""
 
-def draw_health_bar(level):
+def draw_health_bar(level, text, pos):
     screen = level.display_surface
-    y = 20
-    happy_surf = font.render(f"Mental Health: {level.happy}", True, 'white')
+    current_level = level.happy
+    current_text = f"Mental Health: {current_level}"
+    if text == "recovery":
+        current_level = level.recovery
+        current_text = f"Recovery: {current_level}"
+    y = pos
+    happy_surf = font.render(current_text, True, 'white')
     happy_rect = happy_surf.get_rect(topleft = (10, y))
     screen.blit(happy_surf, happy_rect)
     y += 30
-    bar_length = 150
+    bar_length = 200
     bar_height = 20
     bar_position = (10, y)
-    fill_length = (level.happy / 100) * bar_length
+    fill_length = (current_level / 100) * bar_length
     color = (255, 0, 0)
-    if(level.happy > 50):
-        color = (255*((100-level.happy)/50),255, 0)
+    if(current_level > 50):
+        color = (255*((100-current_level)/50),255, 0)
     else:
-        color = (255, 255*(level.happy/50), 0)
+        color = (255, 255*(current_level/50), 0)
     if fill_length > 0:
         pygame.draw.rect(screen, color, (bar_position[0], bar_position[1], fill_length, bar_height))
     pygame.draw.rect(screen, 'black', (bar_position[0], bar_position[1], bar_length, bar_height), 3)
@@ -112,12 +120,13 @@ def draw_health_bar(level):
 
 def render_tasks(level):
     task_list = level.task_list
-    y = 80
+    y = 170
     display_surf = level.display_surface
-    background_surface = pygame.Surface((300, 450), pygame.SRCALPHA)
-    background_surface.fill((0, 0, 0, 64))
+    background_surface = pygame.Surface((300, 550), pygame.SRCALPHA)
+    background_surface.fill((0, 0, 0, 96))
     display_surf.blit(background_surface, (10, 10))
-    draw_health_bar(level)
+    draw_health_bar(level, "recovery", 20)
+    draw_health_bar(level, "mentalhealth", 90)
     for task in task_list:
         task_surface = font.render(task, True, 'green')
         display_surf.blit(task_surface, (10, y))
@@ -162,7 +171,7 @@ def display_task(level, task, start_time, total_time=3, content=""):
     screen = level.display_surface
     if task=='Talk on phone':
         keypad_image = pygame.image.load('../graphics/tasks/telephone.png')
-        keypad_rect = keypad_image.get_rect(center=((700/1600)*WIDTH, (400/1600)*HEIGHT))
+        keypad_rect = keypad_image.get_rect(center=((700/1600)*WIDTH, (380/880)*HEIGHT))
         screen.blit(keypad_image, keypad_rect)
 
         if len(content)==0:
@@ -172,7 +181,8 @@ def display_task(level, task, start_time, total_time=3, content=""):
             screen.blit(text_surface1, ((705/1600)*WIDTH, (300/880)*HEIGHT))
         else:
             text_surface = font.render(content, True, (0, 0, 0))
-            screen.blit(text_surface, ((725/1600)*WIDTH, (280/880)*HEIGHT))
+            screen.blit(text_surface, ((715/1600)*WIDTH, (280/880)*HEIGHT))
+
     elif task=='Check the notes':
         notes_image = pygame.image.load('../graphics/tasks/notes.png')
         notes_rect = notes_image.get_rect(center=((700/1600)*WIDTH, (400/880)*HEIGHT))
@@ -241,7 +251,7 @@ class Popup:
 
         self.text = text
         for line in self.text:
-            line_surface = self.font.render(line, True, 'black')
+            line_surface = self.font.render(line, True, 'white')
             line_width, line_height = line_surface.get_size()
             width = max(width, line_width)
             height += line_height
@@ -272,10 +282,11 @@ class Button:
         self.text = text
         self.color = color
         self.action = action
+        self.font = pygame.font.Font("../graphics/font/joystix.ttf", 24)
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
-        text_surface = font.render(self.text, True, 'black')
+        text_surface = self.font.render(self.text, True, 'black')
         text_rect = text_surface.get_rect(center=self.rect.center)
         screen.blit(text_surface, text_rect)
 

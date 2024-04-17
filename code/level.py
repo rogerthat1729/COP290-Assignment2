@@ -55,7 +55,7 @@ happiness_reduced = {1:10, 2:10, 3:15, 4:15, 5:20}
 task_to_obj = {"Talk on phone":'telephone', "Go to balcony":'chair', "Clean out the trash":'trashcan', "Take a bath":'bathtub', "Do the dishes":'sink', 
 			   "Read a book":'books', 'Do the laundry':'washing_machine', "Buy groceries":'door', 'Take a nap':'bed'}
 
-difficulty_to_bad_task_wait = {'Easy':900, 'Medium':600, 'Hard':300}
+difficulty_to_bad_task_wait = {'Easy':1500, 'Medium':1000, 'Hard':500}
 
 class Level:
 	def __init__(self, character, difficulty, music_volume, game_volume):
@@ -71,6 +71,7 @@ class Level:
 
 		#tasks
 		self.happy = 50
+		self.recovery = 0
 		self.task_list = good_tasks.copy()
 		self.bad_task = ""
 		self.player = Player((1980,1500),[self.visible_sprites],self.obstacle_sprites, character)
@@ -233,7 +234,8 @@ class Level:
 					self.interact_time = None
 			else:
 				self.interact_time = None
-
+		
+	def handle_tasks(self):
 		if self.notes_active:
 			display_task(self, 'Check the notes', None)
 		
@@ -261,9 +263,7 @@ class Level:
 					self.interact_time = None
 		else:
 			pygame.mixer.music.stop()
-		
-
-			# pygame.mixer.music.play('../audio/bg.mp3')
+		# pygame.mixer.music.play('../audio/bg.mp3')
 			
 	
 	def activate_objects(self):
@@ -280,6 +280,10 @@ class Level:
 					spr.active = 0
 				spr.update_image()
 	
+	def update_recovery(self):
+		if(self.happy >= 60):
+			self.recovery = int(min(100, self.recovery+0.01))
+	
 	def check_near_object(self, objname):
 		for sprite in self.visible_sprites.sprites():
 			if sprite.sprite_type == 'object':
@@ -287,23 +291,24 @@ class Level:
 					return (sprite.active==1)
 		return True
 	
-	def check_win_or_lose(self):
-		if(self.happy<=0):
-			show_popup(self, ["Game Over."])
-			self.play = False
-		elif(self.happy>=100):
-			show_popup(self, ["You won!"])
-			self.play = False
+	def check_win_or_lose(self, game):
+		if self.recovery==100:
+			game.go_to = "end"
+		
+	def check_menu(self, game):
+		if self.go_to_menu:
+			game.go_to = "menu"
 		
 	def run(self, game):
 		self.visible_sprites.custom_draw(self.player)
 		self.visible_sprites.update()
 		render_tasks(self)
 		self.input()
-		if self.go_to_menu:
-			game.go_to_menu = True
-			return
+		self.update_recovery()
+		self.check_win_or_lose(game)
+		self.check_menu(game)
 		if(not self.paused):
+			self.handle_tasks()
 			self.activate_objects() 
 			self.handle_popup()
 		# self.update_brightness()
