@@ -6,13 +6,14 @@ from support import *
 from settings import *
 from start import *
 
-good_tasks = ["Read a book", "Take a nap", "Buy groceries", "Clean out the trash", "Do the dishes", "Do the laundry", 
-               "Take a bath", "Go to balcony", "Talk on phone"]
+good_tasks = ["Organize the shelf", "Read a book", "Take a nap", "Buy groceries", "Clean out the trash", "Do the dishes", "Do the laundry", 
+               "Take a bath", "Go to balcony", "Talk on phone", "Take a walk"]
 task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out the trash":"trash", "Take a bath":"bath", "Do the dishes":"sink", 
-               "Read a book":"book", 'Do the laundry':"wash", "Buy groceries":'door', "Take a nap":"bed"}
+               "Read a book":"book", 'Do the laundry':"wash", "Buy groceries":'door', "Take a nap":"bed", "Take a walk":['tree1', 'tree2', 'tree3', 'tree4'],
+               "Organize the shelf":"shelf"}
 phone_codes = ["69420", "43210", "98543", "87658", "38961"]
 task_to_points = {"Talk on phone": 5, "Go to balcony": 10, "Clean out the trash": 5, "Take a bath": 10, "Do the dishes": 15, 
-                    "Read a book": 10, 'Do the laundry': 15, 'Buy groceries':10, "Take a nap": 10}
+                    "Read a book": 10, 'Do the laundry': 15, 'Buy groceries':10, "Take a nap": 10, 'Take a walk':30, 'Organize the shelf':10}
 
 FONT = pygame.font.Font("../graphics/font/joystix.ttf", 24)
 GRAY = (200, 200, 200)
@@ -237,6 +238,16 @@ def display_task(level, task, start_time, total_time=3, content=""):
                     wm_image = wm_animations[frame_index]
                     wm_rect = wm_image.get_rect(center=((800/1600)*WIDTH, (450/880)*HEIGHT))
                     screen.blit(wm_image, wm_rect)
+            
+            elif task=='Organize the shelf':
+                shelf_animations = import_folder('../graphics/tasks/shelf')
+                frame_index = int((elapsed_time/total_time)*4.999)
+
+                if(frame_index<5):
+                    shelf_image = shelf_animations[frame_index]
+                    shelf_image = pygame.transform.scale(shelf_image, (400, 400))
+                    shelf_rect = shelf_image.get_rect(center=((800/1600)*WIDTH, (450/880)*HEIGHT))
+                    screen.blit(shelf_image, shelf_rect)
 
             if elapsed_time >= total_time:
                 return True

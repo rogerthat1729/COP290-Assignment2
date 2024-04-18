@@ -11,7 +11,8 @@ import sys
 import time
 
 index_to_name = {1419:'chair', 1389:'trashcan', 1357:'telephone', 1485:'bathtub', 1386:'sink', 1390:'books', 
-				 1391:'notes', 1480:'washing_machine', 1742:'door', 1738:'bed'}
+				 1391:'notes', 1480:'washing_machine', 1742:'door', 1738:'bed', 1709:'shelf', 192:'tree1', 96:'tree2',
+				 209:'tree3', 208:'tree4'}
 
 pygame.mixer.init()
 
@@ -55,7 +56,8 @@ bad_tasks = {1:["You browsed through social media for 2 hours.",  "Your mental h
 				5: ["You stayed in bed all day and didn't talk to anyone", "Your mental health is reduced by 20 points"]}
 happiness_reduced = {1:10, 2:10, 3:15, 4:15, 5:20}
 task_to_obj = {"Talk on phone":'telephone', "Go to balcony":'chair', "Clean out the trash":'trashcan', "Take a bath":'bathtub', "Do the dishes":'sink', 
-			   "Read a book":'books', 'Do the laundry':'washing_machine', "Buy groceries":'door', 'Take a nap':'bed'}
+			   "Read a book":'books', 'Do the laundry':'washing_machine', "Buy groceries":'door', 'Take a nap':'bed', "Organize the shelf":'shelf',
+				"Take a walk":['tree1', 'tree2', 'tree3', 'tree4']}
 
 difficulty_to_bad_task_wait = {'Easy':1500, 'Medium':1000, 'Hard':500}
 
@@ -118,7 +120,7 @@ class Level:
 		layouts = {
 			'boundary': import_csv_layout('../map/map1_FloorBlocks.csv'),
 			'grass': import_csv_layout('../map/map1_Grass.csv'),
-			'object': import_csv_layout('../map/map1_Objects.csv'),
+			'object': import_csv_layout('../map/new_map_files/map2_Objects.csv'),
 			'details': import_csv_layout('../map/map1_Details.csv'),
 			'entities': import_csv_layout('../map/map1_Entities.csv')
 		}
@@ -438,7 +440,7 @@ class YSortCameraGroup(pygame.sprite.Group):
 		self.offset = pygame.math.Vector2()
 
 		# creating the floor
-		self.floor_surf = pygame.image.load('../map/basic_map.png').convert()
+		self.floor_surf = pygame.image.load('../map/new_map_files/basic_map.png').convert()
 		self.floor_rect = self.floor_surf.get_rect(topleft = (0,0))
 
 	def custom_draw(self,player):
