@@ -1,6 +1,6 @@
-good_tasks = ["Take a walk", "Organize the shelf", "Read a book", "Take a nap", "Buy groceries", 
+good_tasks = ["Talk on phone", "Take a walk", "Organize the shelf", "Read a book", "Take a nap", "Buy groceries", 
               "Clean out the trash", "Do the dishes", "Do the laundry", 
-               "Take a bath", "Go to balcony", "Talk on phone"]
+               "Take a bath", "Go to balcony"]
 
 task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out the trash":"trash", "Take a bath":"bath", 
                "Do the dishes":"sink", "Read a book":"book", 'Do the laundry':"wash", "Buy groceries":'door', 
@@ -25,12 +25,12 @@ task_to_obj = {"Talk on phone":'telephone', "Go to balcony":'chair', "Clean out 
 				'Do the laundry':'washing_machine', "Buy groceries":'door', 'Take a nap':'bed',
 				"Organize the shelf":'shelf', "Take a walk":['tree1', 'tree2', 'tree3', 'tree4']}
 
-task_to_controls = {"Talk on phone":['Press "P" to open the keypad', 'Use number keys to type the code', 'Press "Enter" to enter the code', 'Press "Backspace" to remove last digit'],
+task_to_controls = {"Talk on phone":['Press "P" to open keypad/notes', 'Use number keys to type the code', 'Press "Enter" to enter the code', 'Use "Backspace"'],
 					 "Go to balcony":['Hold "I" to relax'],
 					 "Clean out the trash":['Hold "I" to clean out the trash'],
 					 "Take a bath":['Hold "I" to take a bath'],
 					 "Do the dishes":['Hold "I" to do the dishes'],
-					 "Read a book":['Press "B" to open the book', "Use arrow keys to navigate", 'Use number keys to type the code', 'Press "Enter" to enter the code', 'Press "Backspace" to remove last digit'],
+					 "Read a book":['Press "B" to open the book', "Use arrow keys to navigate", 'Use number keys to type the code', 'Press "Enter" to enter the code', 'Use "Backspace"'],
 					 "Do the laundry":['Hold "I" to do the laundry'],
 					 "Buy groceries":['Hold "I" to buy groceries'],
 					 "Take a nap":['Hold "I" to take a nap'],

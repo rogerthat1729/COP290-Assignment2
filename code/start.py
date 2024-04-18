@@ -1,5 +1,6 @@
 import pygame
 import sys
+import os
 from settings import *
 
 pygame.init()
@@ -28,6 +29,19 @@ def draw_button(text, rect, color, surface):
 def draw_title(text, surface):
     draw_text(text, pygame.font.Font("../graphics/font/joystix.ttf", 75), (255, 255, 0), surface, mid_width-230, 100)
 
+def load_frames(directory):
+    images = []
+    for filename in sorted(os.listdir(directory)):
+        img = pygame.image.load(os.path.join(directory, filename)).convert_alpha()
+        images.append(img)
+    return images
+
+def display_bg(menu, surface):
+    frames = menu.bg_frames
+    # print(frames)
+    img = pygame.transform.scale(frames[int(menu.current_frame) % len(frames)], (WIDTH, HEIGHT))
+    surface.blit(img, (0, 0))
+    menu.current_frame += 0.166667
 
 class Menu:
     def __init__(self):
@@ -37,6 +51,8 @@ class Menu:
             'start': ['Choose Character', 'Difficulty', 'Start Game'],
             'settings': ['Music Volume', 'In-game Volume']
         }
+        self.bg_frames = load_frames('../graphics/home_bck')
+        self.current_frame = 0
         self.buttons = {key: [] for key in self.menus}
         self.create_buttons()
 
@@ -50,9 +66,10 @@ class Menu:
 
     def draw(self, surface):
         pygame.display.set_caption("Petrichor")
-        bg = pygame.image.load('../graphics/ui/bg.png')
-        bg = pygame.transform.scale(bg, (WIDTH, HEIGHT))
-        surface.blit(bg, (0, 0))
+        # bg = pygame.image.load('../graphics/ui/bg.png')
+        # bg = pygame.transform.scale(bg, (WIDTH, HEIGHT))
+        # surface.blit(bg, (0, 0))
+        display_bg(self, surface)
         draw_title("Petrichor", surface)
         draw_text("Main Menu", pygame.font.Font("../graphics/font/joystix.ttf", 48), 'white', surface, mid_width-130, 250)
         for text, rect in self.buttons[self.current_menu]:
@@ -78,14 +95,18 @@ class StartMenu(Menu):
         self.start_game_rect = pygame.Rect(mid_width-60, 670, 230, 50)
         self.back_rect = pygame.Rect(mid_width, 750, 120, 50)
 
+        self.bg_frames = load_frames('../graphics/home_bck')
+        self.current_frame = 0
+
         # Load images and set positions
         self.character_positions = [(mid_width-170, 400), (mid_width+230, 400)]
         self.difficulty_positions = [(mid_width-200, 580), (mid_width, 580), (mid_width+200, 580)]
 
     def draw(self, surface):
         # pygame.display.set_caption("Petrichor")
-        bg = pygame.image.load('../graphics/ui/bg.png')
-        surface.blit(bg, (0, 0))
+        # bg = pygame.image.load('../graphics/ui/bg.png')
+        # surface.blit(bg, (0, 0))
+        display_bg(self, surface)
         draw_title("Petrichor", surface)
         draw_text("Start Menu", pygame.font.Font("../graphics/font/joystix.ttf", 48), 'white', surface, mid_width-130, 250)
         self.draw_characters(surface)
@@ -95,7 +116,7 @@ class StartMenu(Menu):
     def draw_characters(self, surface):
         # char_text = FONT.render("Select Character", True, (255, 255, 255))
         # surface.blit(char_text, (mid_width-90, 350))
-        draw_text("Select Character", FONT, 'white', surface, mid_width-90, 350, 2)
+        draw_text("Select Character", FONT, 'yellow', surface, mid_width-90, 350, 2)
         for i, image in enumerate(self.character_images):
             rect = pygame.Rect(*self.character_positions[i], image.get_width(), image.get_height())
             if i == self.selected_character:
@@ -105,7 +126,7 @@ class StartMenu(Menu):
     def draw_difficulties(self, surface):
         # diff_text = FONT.render("Select Difficulty", True, (255, 255, 255))
         # surface.blit(diff_text, (mid_width-100, 530))
-        draw_text("Select Difficulty", FONT, 'white', surface, mid_width-100, 530, 2)
+        draw_text("Select Difficulty", FONT, 'yellow', surface, mid_width-100, 530, 2)
         for i, difficulty in enumerate(self.difficulties):
             text = FONT.render(difficulty, True, (255, 255, 255))
             text_rect = text.get_rect()
@@ -149,9 +170,13 @@ class SettingsMenu(Menu):
         self.sliders = {'music': pygame.Rect(mid_width-20, 450, 200, 20), 'game': pygame.Rect(mid_width-20, 550, 200, 20)}
         self.back_rect = pygame.Rect(mid_width, 650, 120, 50) 
 
+        self.bg_frames = load_frames('../graphics/home_bck')
+        self.current_frame = 0
+
     def draw(self, surface):
-        bg = pygame.image.load('../graphics/ui/bg.png')
-        surface.blit(bg, (0, 0))
+        # bg = pygame.image.load('../graphics/ui/bg.png')
+        # surface.blit(bg, (0, 0))
+        display_bg(self, surface)
         draw_title("Petrichor", surface)
         draw_text("Settings Menu", pygame.font.Font("../graphics/font/joystix.ttf", 48), 'white', surface, mid_width-180, 250)
         # Draw each slider
