@@ -11,8 +11,8 @@ import sys
 import time
 
 index_to_name = {1419:'chair', 1389:'trashcan', 1357:'telephone', 1485:'bathtub', 1386:'sink', 1390:'books', 
-				 1391:'notes', 1480:'washing_machine', 1742:'door', 1738:'bed', 1709:'shelf', 192:'tree1', 96:'tree2',
-				 209:'tree3', 208:'tree4'}
+				 1391:'notes', 1480:'washing_machine', 1742:'door', 1738:'bed', 1709:'shelf', 192:'tree1',
+				 96:'tree2', 209:'tree3', 208:'tree4'}
 
 pygame.mixer.init()
 
@@ -48,17 +48,6 @@ def happiness_to_alpha(happy, max_happy=100, min_alpha=0, max_alpha=255):
     alpha = max(min_alpha, min(max_alpha, non_linear_alpha))
     return int(alpha)
 
-
-bad_tasks = {1:["You browsed through social media for 2 hours.",  "Your mental health is reduced by 10 points."],
-			  2:["You ate a lot of junk food.", "Your mental health is reduced by 10 points."],
-			    3:["You watched TV for 3 hours", "Your mental health is reduced by 15 points"],
-				4:["You overthought about your bad grade", "Your mental health is reduced by 15 points"],
-				5: ["You stayed in bed all day and didn't talk to anyone", "Your mental health is reduced by 20 points"]}
-happiness_reduced = {1:10, 2:10, 3:15, 4:15, 5:20}
-task_to_obj = {"Talk on phone":'telephone', "Go to balcony":'chair', "Clean out the trash":'trashcan', "Take a bath":'bathtub', "Do the dishes":'sink', 
-			   "Read a book":'books', 'Do the laundry':'washing_machine', "Buy groceries":'door', 'Take a nap':'bed', "Organize the shelf":'shelf',
-				"Take a walk":['tree1', 'tree2', 'tree3', 'tree4']}
-
 difficulty_to_bad_task_wait = {'Easy':1500, 'Medium':1000, 'Hard':500}
 
 class Level:
@@ -85,6 +74,8 @@ class Level:
 		self.brightness_wait = 0
 		self.pop_up_wait = 0
 		self.bad_task_wait = difficulty_to_bad_task_wait[difficulty]
+
+		self.control_text = []
 		
 		self.events = []
 
@@ -436,6 +427,7 @@ class Level:
 		self.visible_sprites.custom_draw(self.player)
 		self.visible_sprites.update()
 		render_tasks(self)
+		render_controls(self)
 		self.input()
 		self.check_menu(game)
 		self.handle_music()

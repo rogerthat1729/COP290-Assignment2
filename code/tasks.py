@@ -6,14 +6,40 @@ from support import *
 from settings import *
 from start import *
 
-good_tasks = ["Take a walk", "Organize the shelf", "Read a book", "Take a nap", "Buy groceries", "Clean out the trash", "Do the dishes", "Do the laundry", 
+good_tasks = ["Take a walk", "Organize the shelf", "Read a book", "Take a nap", "Buy groceries", 
+              "Clean out the trash", "Do the dishes", "Do the laundry", 
                "Take a bath", "Go to balcony", "Talk on phone"]
-task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out the trash":"trash", "Take a bath":"bath", "Do the dishes":"sink", 
-               "Read a book":"book", 'Do the laundry':"wash", "Buy groceries":'door', "Take a nap":"bed", "Take a walk":['tree1', 'tree2', 'tree3', 'tree4'],
-               "Organize the shelf":"shelf"}
+task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out the trash":"trash", "Take a bath":"bath", 
+               "Do the dishes":"sink", "Read a book":"book", 'Do the laundry':"wash", "Buy groceries":'door', 
+               "Take a nap":"bed", "Take a walk":['tree1', 'tree2', 'tree3', 'tree4'], "Organize the shelf":"shelf"}
 phone_codes = ["69420", "43210", "98543", "87658", "38961"]
 task_to_points = {"Talk on phone": 5, "Go to balcony": 10, "Clean out the trash": 5, "Take a bath": 10, "Do the dishes": 15, 
-                    "Read a book": 10, 'Do the laundry': 15, 'Buy groceries':10, "Take a nap": 10, 'Take a walk':30, 'Organize the shelf':10}
+                    "Read a book": 10, 'Do the laundry': 15, 'Buy groceries':10, "Take a nap": 10, 
+                    'Take a walk':30, 'Organize the shelf':10}
+bad_tasks = {1:["You browsed through social media for 2 hours.",  "Your mental health is reduced by 10 points."],
+			2:["You ate a lot of junk food.", "Your mental health is reduced by 10 points."],
+			3:["You watched TV for 3 hours", "Your mental health is reduced by 15 points"],
+			4:["You overthought about your bad grade", "Your mental health is reduced by 15 points"],
+			5: ["You stayed in bed all day and didn't talk to anyone", "Your mental health is reduced by 20 points"]}
+happiness_reduced = {1:10, 2:10, 3:15, 4:15, 5:20}
+task_to_obj = {"Talk on phone":'telephone', "Go to balcony":'chair', "Clean out the trash":'trashcan',
+			    "Take a bath":'bathtub', "Do the dishes":'sink', "Read a book":'books',
+				'Do the laundry':'washing_machine', "Buy groceries":'door', 'Take a nap':'bed',
+				"Organize the shelf":'shelf', "Take a walk":['tree1', 'tree2', 'tree3', 'tree4']}
+
+task_to_controls = {"Talk on phone":['Press "P" to open the keypad', 'Use number keys to type the code', 'Press "Enter" to enter the code', 'Press "Backspace" to remove last digit'],
+					 "Go to balcony":['Hold "I" to relax'],
+					 "Clean out the trash":['Hold "I" to clean out the trash'],
+					 "Take a bath":['Hold "I" to take a bath'],
+					 "Do the dishes":['Hold "I" to do the dishes'],
+					 "Read a book":['Press "B" to open the book', "Use arrow keys to navigate", 'Use number keys to type the code', 'Press "Enter" to enter the code', 'Press "Backspace" to remove last digit'],
+					 "Do the laundry":['Hold "I" to do the laundry'],
+					 "Buy groceries":['Hold "I" to buy groceries'],
+					 "Take a nap":['Hold "I" to take a nap'],
+					 "Organize the shelf":['Hold "I" to organize the shelf'],
+					 "Take a walk":['Hold "I" at each of the four trees']
+					 }
+
 
 FONT = pygame.font.Font("../graphics/font/joystix.ttf", 24)
 GRAY = (200, 200, 200)
@@ -46,7 +72,6 @@ def draw_pause_screen(level):
     main_menu_button = Button((WIDTH - 200) // 2, HEIGHT // 2, 200, 50, "Main Menu", 'green')
     exit_button = Button((WIDTH - 200) // 2, HEIGHT // 2 + 100, 200, 50, "Exit", 'red')
 
-    # Draw buttons
     resume_button.draw(level.display_surface)
     main_menu_button.draw(level.display_surface)
     exit_button.draw(level.display_surface)
@@ -82,13 +107,6 @@ def change_to_task_image(level, task):
                 if level.interact_time:
                     spr.active = 2
                     spr.update_image()
-    # elif task == 'door':
-    #     for spr in level.visible_sprites.sprites():
-    #         if spr.sprite_type == 'object' and spr.name==task:
-    #             if level.interact_time:
-    #                 idx = 2 + int((time.time() - level.interact_time)/level.interact_wait*3.999)
-    #                 spr.active = idx
-    #                 spr.update_image()
 
 def play_music(task, level):
     if task != 'Take a walk':
@@ -155,21 +173,27 @@ def render_tasks(level):
         level.player.done_task = 0
         level.player.show_player = True
 
-# def render_textbox(task, content, level):
-#     if not level.player.is_textbox_active:
-#         return
-#     screen = level.display_surface
-#     # Draw the textbox background
-#     textbox_rect = pygame.Rect(600, 100, 200, 50)
-#     pygame.draw.rect(screen, (255, 255, 255), textbox_rect)
-#     border_rect = textbox_rect.copy()
-#     pygame.draw.rect(screen, (0, 0, 0), border_rect, 3)
-#     # Render the textbox content
-#     text_surface = font.render(content, True, (0, 0, 0))
-#     screen.blit(text_surface, (610, 110))
-#     if content == task_to_seq[task] and level.check_near_object(taskobj[task_to_seq[task]]):
-#         level.player.done_task = 1
-#         level.player.is_textbox_active = False
+def render_controls(level): 
+    task = level.task_list[0]
+    controls = task_to_controls[task]
+    display_surf = level.display_surface
+    height = 80 + 20*len(controls)
+    y = HEIGHT - height - 200
+    background_surface = pygame.Surface((400, height), pygame.SRCALPHA)
+    background_surface.fill((0, 0, 0, 96))
+    display_surf.blit(background_surface, (WIDTH-410, y))
+    y += 10
+    txt_surface = font.render("Controls", True, 'green')
+    display_surf.blit(txt_surface, (WIDTH-400, y))
+    y += 30
+    controls_font = pygame.font.Font("../graphics/font/joystix.ttf", 12)
+    move_surface = controls_font.render('Use "WASD" to move', True, 'yellow')
+    display_surf.blit(move_surface, (WIDTH-400, y))
+    y += 20
+    for control in controls:
+        control_surface = controls_font.render(control, True, 'yellow')
+        display_surf.blit(control_surface, (WIDTH-400, y))
+        y += 20
 
 def check_for_object(list, obj):
     for i in list:
