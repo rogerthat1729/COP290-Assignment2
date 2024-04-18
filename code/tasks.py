@@ -6,8 +6,8 @@ from support import *
 from settings import *
 from start import *
 
-good_tasks = ["Organize the shelf", "Read a book", "Take a nap", "Buy groceries", "Clean out the trash", "Do the dishes", "Do the laundry", 
-               "Take a bath", "Go to balcony", "Talk on phone", "Take a walk"]
+good_tasks = ["Take a walk", "Organize the shelf", "Read a book", "Take a nap", "Buy groceries", "Clean out the trash", "Do the dishes", "Do the laundry", 
+               "Take a bath", "Go to balcony", "Talk on phone"]
 task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out the trash":"trash", "Take a bath":"bath", "Do the dishes":"sink", 
                "Read a book":"book", 'Do the laundry':"wash", "Buy groceries":'door', "Take a nap":"bed", "Take a walk":['tree1', 'tree2', 'tree3', 'tree4'],
                "Organize the shelf":"shelf"}
@@ -91,9 +91,10 @@ def change_to_task_image(level, task):
     #                 spr.update_image()
 
 def play_music(task, level):
-    pygame.mixer.music.set_volume(level.game_volume/100)
-    pygame.mixer.music.load(f'../audio/{task}.mp3')
-    pygame.mixer.music.play()
+    if task != 'Take a walk':
+        pygame.mixer.music.set_volume(level.game_volume/100)
+        pygame.mixer.music.load(f'../audio/{task}.mp3')
+        pygame.mixer.music.play()
 
 def check_keypad_code(level):
     if level.phone_keypad_content == level.correct_code:
@@ -132,7 +133,7 @@ def render_tasks(level):
     task_list = level.task_list
     y = 170
     display_surf = level.display_surface
-    background_surface = pygame.Surface((300, 550), pygame.SRCALPHA)
+    background_surface = pygame.Surface((300, 600), pygame.SRCALPHA)
     background_surface.fill((0, 0, 0, 96))
     display_surf.blit(background_surface, (10, 10))
     draw_health_bar(level, "recovery", 20)
@@ -172,7 +173,7 @@ def render_tasks(level):
 
 def check_for_object(list, obj):
     for i in list:
-        if i.name == obj:
+        if i and i.name == obj:
             return True
     return False
 
@@ -398,3 +399,34 @@ class BookTask:
             elif event.key == pygame.K_BACKSPACE:
                 if len(self.user_input) > 0:
                     self.user_input = self.user_input[:-1]
+
+
+class WalkTask:
+    def __init__(self, level):
+        self.level = level
+        self.trees = ['tree1', 'tree2', 'tree3', 'tree4']
+        self.subtasks_completed = {tree: False for tree in self.trees}
+        self.all_subtasks_completed = False
+
+    def check_subtask_completion(self, tree):
+        if self.level.interact_time and self.level.check_near_object(tree):
+            elapsed_time = time.time() - self.level.interact_time
+            if elapsed_time >= self.level.interact_wait:
+                self.subtasks_completed[tree] = True
+                self.level.interact_time = None # Reset interaction time
+
+    def update(self):
+        for tree in self.trees:
+            self.check_subtask_completion(tree)
+        self.all_subtasks_completed = all(self.subtasks_completed.values())
+        if self.all_subtasks_completed:
+            self.level.player.done_task = 1
+            print("Walk task completed")
+
+    def render(self):
+        for tree in self.trees:
+            if self.subtasks_completed[tree]:
+                continue
+            if self.level.interact_time and self.level.check_near_object(tree):
+                display_task(self.level, tree, self.level.interact_time, self.level.interact_wait)
+                break
