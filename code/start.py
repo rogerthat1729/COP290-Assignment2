@@ -27,21 +27,26 @@ def draw_button(text, rect, color, surface):
     draw_text(text, FONT, color, surface, rect.x + 20, rect.y + 10, 2)
 
 def draw_title(text, surface):
-    draw_text(text, pygame.font.Font("../graphics/font/joystix.ttf", 75), (255, 255, 0), surface, mid_width-230, 100)
+    draw_text(text, pygame.font.Font("../graphics/font/joystix.ttf", 75), '#ffee58', surface, mid_width-230, 100)
 
 def load_frames(directory):
     images = []
+    a = True
     for filename in sorted(os.listdir(directory)):
-        img = pygame.image.load(os.path.join(directory, filename)).convert_alpha()
-        images.append(img)
+        if a == True:
+            img = pygame.image.load(os.path.join(directory, filename)).convert_alpha()
+            img = pygame.transform.scale(img, (WIDTH, HEIGHT))
+            images.append(img)
+            a = False
+        else:
+            a = True
     return images
 
 def display_bg(menu, surface):
     frames = menu.bg_frames
-    # print(frames)
     img = pygame.transform.scale(frames[int(menu.current_frame) % len(frames)], (WIDTH, HEIGHT))
     surface.blit(img, (0, 0))
-    menu.current_frame += 0.416667
+    menu.current_frame += 0.1666667
 
 class Menu:
     def __init__(self):
@@ -51,7 +56,7 @@ class Menu:
             'start': ['Choose Character', 'Difficulty', 'Start Game'],
             'settings': ['Music Volume', 'In-game Volume']
         }
-        self.bg_frames = load_frames('../graphics/rain')
+        self.bg_frames = load_frames('../graphics/girlrain')
         self.current_frame = 0
         self.buttons = {key: [] for key in self.menus}
         self.create_buttons()
@@ -73,7 +78,7 @@ class Menu:
         draw_title("Petrichor", surface)
         draw_text("Main Menu", pygame.font.Font("../graphics/font/joystix.ttf", 48), 'white', surface, mid_width-130, 250)
         for text, rect in self.buttons[self.current_menu]:
-            draw_button(text, rect, 'yellow', surface)
+            draw_button(text, rect, '#ffee58', surface)
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -95,7 +100,7 @@ class StartMenu(Menu):
         self.start_game_rect = pygame.Rect(mid_width-60, 670, 230, 50)
         self.back_rect = pygame.Rect(mid_width, 750, 120, 50)
 
-        self.bg_frames = load_frames('../graphics/rain')
+        self.bg_frames = load_frames('../graphics/girlrain')
         self.current_frame = 0
 
         # Load images and set positions
@@ -116,17 +121,17 @@ class StartMenu(Menu):
     def draw_characters(self, surface):
         # char_text = FONT.render("Select Character", True, (255, 255, 255))
         # surface.blit(char_text, (mid_width-90, 350))
-        draw_text("Select Character", FONT, 'yellow', surface, mid_width-90, 350, 2)
+        draw_text("Select Character", FONT, '#ffee58', surface, mid_width-90, 350, 2)
         for i, image in enumerate(self.character_images):
             rect = pygame.Rect(*self.character_positions[i], image.get_width(), image.get_height())
             if i == self.selected_character:
-                pygame.draw.rect(surface, 'yellow', rect)  # Draw a red rectangle around the selected character
+                pygame.draw.rect(surface, '#ffee58', rect)  # Draw a red rectangle around the selected character
             surface.blit(image, rect.topleft)
 
     def draw_difficulties(self, surface):
         # diff_text = FONT.render("Select Difficulty", True, (255, 255, 255))
         # surface.blit(diff_text, (mid_width-100, 530))
-        draw_text("Select Difficulty", FONT, 'yellow', surface, mid_width-100, 530, 2)
+        draw_text("Select Difficulty", FONT, '#ffee58', surface, mid_width-100, 530, 2)
         for i, difficulty in enumerate(self.difficulties):
             text = FONT.render(difficulty, True, (255, 255, 255))
             text_rect = text.get_rect()
@@ -137,8 +142,8 @@ class StartMenu(Menu):
             draw_text(difficulty, FONT, 'white', surface, rect.x, rect.y, 2)
     
     def draw_buttons(self, surface):
-        draw_button('Start Game', self.start_game_rect, 'yellow', surface)
-        draw_button('Back', self.back_rect, 'yellow', surface)
+        draw_button('Start Game', self.start_game_rect, '#ffee58', surface)
+        draw_button('Back', self.back_rect, '#ffee58', surface)
     
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -170,7 +175,7 @@ class SettingsMenu(Menu):
         self.sliders = {'music': pygame.Rect(mid_width-20, 450, 200, 20), 'game': pygame.Rect(mid_width-20, 550, 200, 20)}
         self.back_rect = pygame.Rect(mid_width, 650, 120, 50) 
 
-        self.bg_frames = load_frames('../graphics/rain')
+        self.bg_frames = load_frames('../graphics/girlrain')
         self.current_frame = 0
 
     def draw(self, surface):
@@ -191,7 +196,7 @@ class SettingsMenu(Menu):
             pygame.draw.rect(surface, WHITE, (rect.x, rect.y, self.music_volume if key == 'music' else self.game_volume, rect.height))  # The volume level
 
         # Draw back button
-        draw_button("Back", self.back_rect, 'yellow', surface)
+        draw_button("Back", self.back_rect, '#ffee58', surface)
     
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
