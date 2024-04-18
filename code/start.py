@@ -41,7 +41,7 @@ def display_bg(menu, surface):
     # print(frames)
     img = pygame.transform.scale(frames[int(menu.current_frame) % len(frames)], (WIDTH, HEIGHT))
     surface.blit(img, (0, 0))
-    menu.current_frame += 0.166667
+    menu.current_frame += 0.416667
 
 class Menu:
     def __init__(self):
@@ -51,7 +51,7 @@ class Menu:
             'start': ['Choose Character', 'Difficulty', 'Start Game'],
             'settings': ['Music Volume', 'In-game Volume']
         }
-        self.bg_frames = load_frames('../graphics/home_bck')
+        self.bg_frames = load_frames('../graphics/rain')
         self.current_frame = 0
         self.buttons = {key: [] for key in self.menus}
         self.create_buttons()
@@ -95,7 +95,7 @@ class StartMenu(Menu):
         self.start_game_rect = pygame.Rect(mid_width-60, 670, 230, 50)
         self.back_rect = pygame.Rect(mid_width, 750, 120, 50)
 
-        self.bg_frames = load_frames('../graphics/home_bck')
+        self.bg_frames = load_frames('../graphics/rain')
         self.current_frame = 0
 
         # Load images and set positions
@@ -170,7 +170,7 @@ class SettingsMenu(Menu):
         self.sliders = {'music': pygame.Rect(mid_width-20, 450, 200, 20), 'game': pygame.Rect(mid_width-20, 550, 200, 20)}
         self.back_rect = pygame.Rect(mid_width, 650, 120, 50) 
 
-        self.bg_frames = load_frames('../graphics/home_bck')
+        self.bg_frames = load_frames('../graphics/rain')
         self.current_frame = 0
 
     def draw(self, surface):
