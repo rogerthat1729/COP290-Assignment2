@@ -5,41 +5,7 @@ import sys
 from support import *
 from settings import *
 from start import *
-
-good_tasks = ["Take a walk", "Organize the shelf", "Read a book", "Take a nap", "Buy groceries", 
-              "Clean out the trash", "Do the dishes", "Do the laundry", 
-               "Take a bath", "Go to balcony", "Talk on phone"]
-task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out the trash":"trash", "Take a bath":"bath", 
-               "Do the dishes":"sink", "Read a book":"book", 'Do the laundry':"wash", "Buy groceries":'door', 
-               "Take a nap":"bed", "Take a walk":['tree1', 'tree2', 'tree3', 'tree4'], "Organize the shelf":"shelf"}
-phone_codes = ["69420", "43210", "98543", "87658", "38961"]
-task_to_points = {"Talk on phone": 5, "Go to balcony": 10, "Clean out the trash": 5, "Take a bath": 10, "Do the dishes": 15, 
-                    "Read a book": 10, 'Do the laundry': 15, 'Buy groceries':10, "Take a nap": 10, 
-                    'Take a walk':30, 'Organize the shelf':10}
-bad_tasks = {1:["You browsed through social media for 2 hours.",  "Your mental health is reduced by 10 points."],
-			2:["You ate a lot of junk food.", "Your mental health is reduced by 10 points."],
-			3:["You watched TV for 3 hours", "Your mental health is reduced by 15 points"],
-			4:["You overthought about your bad grade", "Your mental health is reduced by 15 points"],
-			5: ["You stayed in bed all day and didn't talk to anyone", "Your mental health is reduced by 20 points"]}
-happiness_reduced = {1:10, 2:10, 3:15, 4:15, 5:20}
-task_to_obj = {"Talk on phone":'telephone', "Go to balcony":'chair', "Clean out the trash":'trashcan',
-			    "Take a bath":'bathtub', "Do the dishes":'sink', "Read a book":'books',
-				'Do the laundry':'washing_machine', "Buy groceries":'door', 'Take a nap':'bed',
-				"Organize the shelf":'shelf', "Take a walk":['tree1', 'tree2', 'tree3', 'tree4']}
-
-task_to_controls = {"Talk on phone":['Press "P" to open the keypad', 'Use number keys to type the code', 'Press "Enter" to enter the code', 'Press "Backspace" to remove last digit'],
-					 "Go to balcony":['Hold "I" to relax'],
-					 "Clean out the trash":['Hold "I" to clean out the trash'],
-					 "Take a bath":['Hold "I" to take a bath'],
-					 "Do the dishes":['Hold "I" to do the dishes'],
-					 "Read a book":['Press "B" to open the book', "Use arrow keys to navigate", 'Use number keys to type the code', 'Press "Enter" to enter the code', 'Press "Backspace" to remove last digit'],
-					 "Do the laundry":['Hold "I" to do the laundry'],
-					 "Buy groceries":['Hold "I" to buy groceries'],
-					 "Take a nap":['Hold "I" to take a nap'],
-					 "Organize the shelf":['Hold "I" to organize the shelf'],
-					 "Take a walk":['Hold "I" at each of the four trees']
-					 }
-
+from dictionaries import *
 
 FONT = pygame.font.Font("../graphics/font/joystix.ttf", 24)
 GRAY = (200, 200, 200)
@@ -157,7 +123,10 @@ def render_tasks(level):
     draw_health_bar(level, "recovery", 20)
     draw_health_bar(level, "mentalhealth", 90)
     for task in task_list:
-        task_surface = font.render(task, True, 'green')
+        txt = task
+        if task == 'Take a walk':
+            txt = task + f" ({level.walktask.completed_counter}/4)"
+        task_surface = font.render(txt, True, 'green')
         display_surf.blit(task_surface, (10, y))
         y += 40
     # level.happy = max(0, level.happy-0.01)
@@ -179,21 +148,29 @@ def render_controls(level):
     display_surf = level.display_surface
     height = 80 + 20*len(controls)
     y = HEIGHT - height - 200
-    background_surface = pygame.Surface((400, height), pygame.SRCALPHA)
+    background_surface = pygame.Surface((530, height), pygame.SRCALPHA)
     background_surface.fill((0, 0, 0, 96))
-    display_surf.blit(background_surface, (WIDTH-410, y))
+    display_surf.blit(background_surface, (WIDTH-580, y))
     y += 10
     txt_surface = font.render("Controls", True, 'green')
-    display_surf.blit(txt_surface, (WIDTH-400, y))
+    display_surf.blit(txt_surface, (WIDTH-570, y))
     y += 30
-    controls_font = pygame.font.Font("../graphics/font/joystix.ttf", 12)
+    controls_font = pygame.font.Font("../graphics/font/joystix.ttf", 18)
     move_surface = controls_font.render('Use "WASD" to move', True, 'yellow')
-    display_surf.blit(move_surface, (WIDTH-400, y))
+    display_surf.blit(move_surface, (WIDTH-570, y))
     y += 20
     for control in controls:
         control_surface = controls_font.render(control, True, 'yellow')
-        display_surf.blit(control_surface, (WIDTH-400, y))
+        display_surf.blit(control_surface, (WIDTH-570, y))
         y += 20
+    y += 32
+    keyboard_image = pygame.image.load('../graphics/ui/keyboard/keyboard1.png')
+    if len(controls)==4:
+        keyboard_image = pygame.image.load('../graphics/ui/keyboard/keyboard2.png')
+    elif len(controls)==5:
+        keyboard_image = pygame.image.load('../graphics/ui/keyboard/keyboard3.png')
+    keyboard_surf = pygame.transform.scale(keyboard_image, (573, 168))
+    display_surf.blit(keyboard_surf, (WIDTH-580, y))
 
 def check_for_object(list, obj):
     for i in list:
@@ -330,127 +307,7 @@ class Button:
         self.font = pygame.font.Font("../graphics/font/joystix.ttf", 30)
 
     def draw(self, screen):
-        # pygame.draw.rect(screen, self.color, self.rect)
         draw_text(self.text, self.font, self.color, screen, self.rect.x, self.rect.y, 2)
 
     def is_clicked(self, pos):
         return self.rect.collidepoint(pos)
-
-class BookTask:
-    def __init__(self, level):
-        self.book_image = pygame.image.load('../graphics/tasks/books/book.png')
-        self.level = level
-        self.pages = [[pygame.image.load('../graphics/tasks/cb/cb3.png'), pygame.image.load('../graphics/tasks/cb/cb1.png')],
-                       [pygame.image.load('../graphics/tasks/cb/cb4.png'), pygame.image.load('../graphics/tasks/cb/cb1.png')],
-                         [pygame.image.load('../graphics/tasks/cb/cb5.png')]] # Example pages
-        self.current_page = 0
-        self.active = False
-        self.code = "31415"
-        self.user_input = ""
-        self.font = pygame.font.Font("../graphics/font/joystix.ttf", 14)
-
-    def start(self):
-        self.active = True
-
-    def render(self):
-        if not self.active:
-            return
-        # Render the book image with text
-        self.level.display_surface.blit(self.book_image, (WIDTH // 2 - self.book_image.get_width() // 2, HEIGHT // 2 - self.book_image.get_height() // 2))
-        
-        if self.current_page == 0:
-            img1 = pygame.transform.scale(self.pages[0][0], (170, 170))
-            img2 = pygame.transform.scale(self.pages[0][1], (200, 200))
-            self.level.display_surface.blit(img1, (WIDTH // 2 - 230, HEIGHT // 2 - 80))
-            self.level.display_surface.blit(img2, (WIDTH // 2 - 10, HEIGHT // 2 - 100))
-        elif self.current_page == 1:
-            img1 = pygame.transform.scale(self.pages[1][0], (200, 200))
-            img2 = pygame.transform.scale(self.pages[1][1], (200, 200))
-            self.level.display_surface.blit(img1, (WIDTH // 2 - 250, HEIGHT // 2 - 100))
-            self.level.display_surface.blit(img2, (WIDTH // 2 - 10, HEIGHT // 2 - 100))
-        else:
-            img1 = pygame.transform.scale(self.pages[2][0], (200, 200))
-            self.level.display_surface.blit(img1, (WIDTH // 2 - 250, HEIGHT // 2 - 100))
-
-            text1 = self.font.render("Enter the code:", True, 'black')
-            self.level.display_surface.blit(text1, (WIDTH // 2, HEIGHT // 2 - 50))
-
-            pygame.draw.rect(self.level.display_surface, 'white', (WIDTH // 2 + 10, HEIGHT // 2, 150, 30))
-            pygame.draw.rect(self.level.display_surface, 'black', (WIDTH // 2 + 10, HEIGHT // 2, 150, 30), 2)
-            input_surface = self.font.render(self.user_input, True, (0, 0, 0))
-            self.level.display_surface.blit(input_surface, (WIDTH // 2 + 15, HEIGHT // 2 + 5))
-        
-    def render_text(self):
-        y = HEIGHT//2 - self.book_image.get_height()//2 + 90
-        x = WIDTH//2 - self.book_image.get_width()//2 + 100
-        #resize image to 100 x 200
-        pg_image = pygame.transform.scale(self.pages[self.current_page], (100, 200))
-        # for line in self.pages[self.current_page]:
-        #     #resize image to 100 x 200
-        #     # text_surface = self.font.render(line, True, 'black')
-        #     # self.level.display_surface.blit(text_surface, (x, y))
-        #     y += text_surface.get_height() + 5
-
-    def handle_input(self, event):
-        if not self.active:
-            self.current_page = 0
-            self.user_input = ""
-            return
-        
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT:
-                if self.current_page < len(self.pages) - 1:
-                    self.current_page += 1
-            elif event.key == pygame.K_LEFT:
-                if self.current_page > 0:
-                    self.current_page -= 1
-            elif event.key == pygame.K_ESCAPE:
-                self.active = False
-                self.current_page = 0
-                self.user_input = ""
-            elif event.key == pygame.K_RETURN and self.current_page == len(self.pages) - 1:
-                if self.user_input == self.code:
-                    self.level.player.done_task = 1
-                    print("Task completed")
-                else:
-                    print("Incorrect code")
-                self.current_page = 0
-                self.user_input = ""
-                self.active = False
-            elif event.unicode.isnumeric():
-                if len(self.user_input) < 5 and self.current_page == len(self.pages) - 1:
-                    self.user_input += event.unicode
-            elif event.key == pygame.K_BACKSPACE:
-                if len(self.user_input) > 0:
-                    self.user_input = self.user_input[:-1]
-
-
-class WalkTask:
-    def __init__(self, level):
-        self.level = level
-        self.trees = ['tree1', 'tree2', 'tree3', 'tree4']
-        self.subtasks_completed = {tree: False for tree in self.trees}
-        self.all_subtasks_completed = False
-
-    def check_subtask_completion(self, tree):
-        if self.level.interact_time and self.level.check_near_object(tree):
-            elapsed_time = time.time() - self.level.interact_time
-            if elapsed_time >= self.level.interact_wait:
-                self.subtasks_completed[tree] = True
-                self.level.interact_time = None # Reset interaction time
-
-    def update(self):
-        for tree in self.trees:
-            self.check_subtask_completion(tree)
-        self.all_subtasks_completed = all(self.subtasks_completed.values())
-        if self.all_subtasks_completed:
-            self.level.player.done_task = 1
-            print("Walk task completed")
-
-    def render(self):
-        for tree in self.trees:
-            if self.subtasks_completed[tree]:
-                continue
-            if self.level.interact_time and self.level.check_near_object(tree):
-                display_task(self.level, tree, self.level.interact_time, self.level.interact_wait)
-                break

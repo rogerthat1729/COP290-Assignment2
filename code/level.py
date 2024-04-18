@@ -2,67 +2,26 @@ import pygame
 from settings import *
 from tile import Tile
 from player import Player
-from debug import debug
 from support import *
 from random import choice
 from tasks import *
-import math
+from dictionaries import *
+from walkbook import *
 import sys
 import time
 
-index_to_name = {1419:'chair', 1389:'trashcan', 1357:'telephone', 1485:'bathtub', 1386:'sink', 1390:'books', 
-				 1391:'notes', 1480:'washing_machine', 1742:'door', 1738:'bed', 1709:'shelf', 192:'tree1',
-				 96:'tree2', 209:'tree3', 208:'tree4'}
-
 pygame.mixer.init()
-
-def create_radial_gradient(width, height, inner_color, outer_color):
-    surface = pygame.Surface((width, height), pygame.SRCALPHA)
-    center = (width // 2, height // 2)
-    max_radius = int(max(center[0], center[1]) * 1.414)  # Diagonal length
-    num_circles = 50  # Number of concentric circles. Adjust for smoothness.
-
-    for i in range(num_circles, 0, -1):
-        radius = (i / num_circles) * max_radius
-        color = [inner_color[j] + (outer_color[j] - inner_color[j]) * (i / num_circles) for j in range(4)]
-        pygame.draw.circle(surface, color, center, int(radius))
-    
-    return surface
-
-def happiness_to_alpha(happy, max_happy=100, min_alpha=0, max_alpha=255):
-    """
-    Convert happiness level to an alpha value for the overlay using an exponential function.
-    
-    :param happy: Current happiness level.
-    :param max_happy: Maximum possible happiness level.
-    :param min_alpha: Minimum alpha value (more transparent, more happy).
-    :param max_alpha: Maximum alpha value (less transparent, less happy).
-    :return: Alpha value based on the current happiness level.
-    """
-    # Map the happiness to a [0, 1] range
-    normalized_happy = happy / max_happy
-    # Use an exponential function for a non-linear mapping
-    # Adjust the exponent as needed to achieve the desired perceptual uniformity
-    non_linear_alpha = (1 - math.pow(normalized_happy, 2)) * (max_alpha - min_alpha) + min_alpha
-    # Ensure alpha is within bounds
-    alpha = max(min_alpha, min(max_alpha, non_linear_alpha))
-    return int(alpha)
-
-difficulty_to_bad_task_wait = {'Easy':1500, 'Medium':1000, 'Hard':500}
 
 class Level:
 	def __init__(self, character, difficulty, music_volume, game_volume):
-		# get the display surface 
 		self.display_surface = pygame.display.get_surface()
 		self.overlay = pygame.Surface(self.display_surface.get_size(), pygame.SRCALPHA)
 
-		# sprite group setup
 		self.visible_sprites = YSortCameraGroup()
 		self.obstacle_sprites = pygame.sprite.Group()
 
 		self.go_to_menu = False
 
-		#tasks
 		self.happy = 50
 		self.recovery = 0
 		self.task_list = good_tasks.copy()
@@ -105,7 +64,7 @@ class Level:
 		self.booktask = BookTask(self)
 		self.walktask = WalkTask(self)
 		self.book_active = False
-		# sprite setup
+
 		self.create_map()
 
 	def create_map(self):
@@ -137,16 +96,6 @@ class Level:
 								surf = graphics['objects'][idx]
 								Tile((x,y),[self.visible_sprites,self.obstacle_sprites],'object',[surf])
 
-	def update_brightness(self):
-		width, height = self.display_surface.get_size() 
-		alpha = happiness_to_alpha(self.happy)
-		inner_color = (0, 0, 0, 0)
-		outer_color = (0, 0, 0, min(alpha*4, 255))
-		
-		gradient_overlay = create_radial_gradient(width, height, inner_color, outer_color)
-		self.display_surface.blit(gradient_overlay, (0, 0))
-		pygame.display.flip()
-	
 	def handle_popup(self):
 		if self.pop_up_wait >= self.bad_task_wait and not self.interact_time:
 			bad_task_index = choice(list(bad_tasks.keys()))
@@ -160,12 +109,11 @@ class Level:
 			show_popup(self, self.bad_task)
 	
 	def handle_music(self, arg=None):	
-		# print(self.menu_music_running, self.game_music_running, self.task_music_running)
 		if not arg:
 			if self.menu_music_running == 0 and self.game_music_running == 1 and self.task_music_running == 0:
 				pygame.mixer.music.stop()
 				pygame.mixer.music.load(self.gamebg_track_path)
-				pygame.mixer.music.set_volume(self.music_volume)
+				pygame.mixer.music.set_volume(self.game_volume/100)
 				pygame.mixer.music.play(-1)
 				self.game_music_running = 2
 			if self.menu_music_running == 0 and self.game_music_running == 0 and self.task_music_running == 1:
@@ -175,7 +123,7 @@ class Level:
 			if self.menu_music_running == 1 and self.game_music_running == 0 and (self.task_music_running == 0 or self.task_music_running == 2):
 				pygame.mixer.music.stop()
 				pygame.mixer.music.load(self.menubg_track_path)
-				pygame.mixer.music.set_volume(self.music_volume)
+				pygame.mixer.music.set_volume(self.music_volume/100)
 				pygame.mixer.music.play(-1)
 				self.menu_music_running = 2
 		else:
@@ -207,45 +155,8 @@ class Level:
 					self.menu_music_running = 0
 					self.game_music_running = 0
 					self.task_music_running = 1
-			# self.handle_music()
-		# if self.paused and self.menu_music_running==0:
-		# 	self.game_music_running = 0
-		# 	self.task_music_running = 0
-		# 	self.menu_music_running = 1
-		# elif not self.paused and self.menu_music_running==2:
-		# 	if self.task_music_running==1:
-		# 		pass
-		# 	elif self.task_music_running==2:
-		# 		self.task_music_running = 1
-		# 	else:
-		# 		self.game_music_running = 1
-		# 	self.menu_music_running=0
-		# elif self.task_music_running==1:
-		# 	self.game_music_running=0
-		# 	self.menu_music_running=0
-		# elif self.task_music_running==2 and pygame.mixer.music.get_busy()==0:
-		# 	self.task_music_running = 0
-		# 	self.game_music_running = 1
-
-		# if self.game_music_running == 1:
-		# 	pygame.mixer.music.stop()
-		# 	pygame.mixer.music.load(self.gamebg_track_path)
-		# 	pygame.mixer.music.set_volume(self.music_volume)
-		# 	pygame.mixer.music.play(-1)
-		# 	self.game_music_running = 2
-		# elif self.menu_music_running == 1:
-		# 	pygame.mixer.music.stop()
-		# 	pygame.mixer.music.load(self.menubg_track_path)
-		# 	pygame.mixer.music.set_volume(self.music_volume)
-		# 	pygame.mixer.music.play(-1)
-		# 	self.menu_music_running = 2
-		# elif self.task_music_running == 1:
-		# 	pygame.mixer.music.stop()
-		# 	play_music(task_to_seq[self.task_list[0]], self)
-		# 	self.task_music_running = 2
 		
 	def input(self):
-		# print(self.paused)
 		draw_pause_button(self)
 		keys = pygame.key.get_pressed()
 		bothchecker=0
