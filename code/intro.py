@@ -4,7 +4,7 @@ from settings import *
 font = pygame.font.Font("../graphics/font/merchant.ttf", 40)
 
 class IntroScreen:
-    def __init__(self, text, image_path, char_delay=20):
+    def __init__(self, text, image_path, char_delay=13):
         self.full_text = text
         self.image = pygame.image.load(image_path)  # Load your image here
         self.image_rect = self.image.get_rect(center=(WIDTH / 2, HEIGHT / 2))
