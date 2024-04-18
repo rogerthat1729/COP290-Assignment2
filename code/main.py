@@ -36,16 +36,16 @@ def main():
     clock = pygame.time.Clock()
 
     # Create instances of each screen
-    intro_screen1 = IntroScreen("Susan had always been a bright and cheerful young woman, filled with a zest for life.", "../graphics/intro/girl.png")
+    intro_screen1 = IntroScreen("Rosa had always been a bright and cheerful young woman, filled with a zest for life.", "../graphics/intro/girl2.png")
     intro_screen2 = IntroScreen("Growing up, she was the light of her family, bringing joy and laughter wherever she went.", "../graphics/intro/family.png")
     intro_screen3 = IntroScreen("However, her world came crashing down when her brother, Ethan, passed away in a car accident.", "../graphics/intro/crash.png")
-    intro_screen4 = IntroScreen("Ethan had been Susan's closest confidant, her partner in crime, and her ultimate support.", "../graphics/intro/brother.png")
+    intro_screen4 = IntroScreen("Ethan had been Rosa's closest confidant, her partner in crime, and her ultimate support.", "../graphics/intro/brother.png")
     intro_screen5 = IntroScreen("...", "../graphics/intro/flowers.png")
-    intro_screen6 = IntroScreen("Susan struggled to find her footing. The grief consumed her, leaving her hopeless.", "../graphics/intro/sad.png")  
+    intro_screen6 = IntroScreen("Rosa struggled to find her footing. The grief consumed her, leaving her hopeless.", "../graphics/intro/sad.png")  
     intro_screen7 = IntroScreen("She isolated herself from everyone, unable to find the strength to engage with the world around her.", "../graphics/intro/sad2.png") 
-    intro_screen8 = IntroScreen("The darkness and despair had become unbearable for Susan. She attempted to take her own life, ", "../graphics/intro/rope.png")
-    intro_screen9 = IntroScreen("But fate had other plans for Susan...", "../graphics/intro/rope.png")
-    intro_screen10 = IntroScreen("The rope she had fashioned was not properly secured, and Susan found herself struggling for breath but still alive.", "../graphics/intro/rope.png")
+    intro_screen8 = IntroScreen("The darkness and despair had become unbearable for Rosa. She attempted to take her own life, ", "../graphics/intro/rope.png")
+    intro_screen9 = IntroScreen("But fate had other plans for Rosa...", "../graphics/intro/rope.png")
+    intro_screen10 = IntroScreen("The rope she had fashioned was not properly secured, and Rosa found herself struggling for breath but still alive.", "../graphics/intro/rope.png")
     intro_screen11 = IntroScreen("As she lay on the floor, gasping for air, her eyes landed on a framed photograph of her beloved brother Ethan.", "../graphics/intro/hope.png")
     intro_screen12 = IntroScreen("His warm smile and kind eyes seemed to cut through the fog of her depression, igniting a glimmer of hope within her.", "../graphics/intro/hope.png")
 
