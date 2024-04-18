@@ -6,13 +6,14 @@ from support import *
 from settings import *
 from start import *
 
-good_tasks = ["Read a book", "Take a nap", "Buy groceries", "Clean out the trash", "Do the dishes", "Do the laundry", 
+good_tasks = ["Take a walk", "Organize the shelf", "Read a book", "Take a nap", "Buy groceries", "Clean out the trash", "Do the dishes", "Do the laundry", 
                "Take a bath", "Go to balcony", "Talk on phone"]
 task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out the trash":"trash", "Take a bath":"bath", "Do the dishes":"sink", 
-               "Read a book":"book", 'Do the laundry':"wash", "Buy groceries":'door', "Take a nap":"bed"}
+               "Read a book":"book", 'Do the laundry':"wash", "Buy groceries":'door', "Take a nap":"bed", "Take a walk":['tree1', 'tree2', 'tree3', 'tree4'],
+               "Organize the shelf":"shelf"}
 phone_codes = ["69420", "43210", "98543", "87658", "38961"]
 task_to_points = {"Talk on phone": 5, "Go to balcony": 10, "Clean out the trash": 5, "Take a bath": 10, "Do the dishes": 15, 
-                    "Read a book": 10, 'Do the laundry': 15, 'Buy groceries':10, "Take a nap": 10}
+                    "Read a book": 10, 'Do the laundry': 15, 'Buy groceries':10, "Take a nap": 10, 'Take a walk':30, 'Organize the shelf':10}
 
 FONT = pygame.font.Font("../graphics/font/joystix.ttf", 24)
 GRAY = (200, 200, 200)
@@ -90,9 +91,10 @@ def change_to_task_image(level, task):
     #                 spr.update_image()
 
 def play_music(task, level):
-    pygame.mixer.music.set_volume(level.game_volume/100)
-    pygame.mixer.music.load(f'../audio/{task}.mp3')
-    pygame.mixer.music.play()
+    if task != 'Take a walk':
+        pygame.mixer.music.set_volume(level.game_volume/100)
+        pygame.mixer.music.load(f'../audio/{task}.mp3')
+        pygame.mixer.music.play()
 
 def check_keypad_code(level):
     if level.phone_keypad_content == level.correct_code:
@@ -131,7 +133,7 @@ def render_tasks(level):
     task_list = level.task_list
     y = 170
     display_surf = level.display_surface
-    background_surface = pygame.Surface((300, 550), pygame.SRCALPHA)
+    background_surface = pygame.Surface((300, 600), pygame.SRCALPHA)
     background_surface.fill((0, 0, 0, 96))
     display_surf.blit(background_surface, (10, 10))
     draw_health_bar(level, "recovery", 20)
@@ -171,7 +173,7 @@ def render_tasks(level):
 
 def check_for_object(list, obj):
     for i in list:
-        if i.name == obj:
+        if i and i.name == obj:
             return True
     return False
 
@@ -237,6 +239,16 @@ def display_task(level, task, start_time, total_time=3, content=""):
                     wm_image = wm_animations[frame_index]
                     wm_rect = wm_image.get_rect(center=((800/1600)*WIDTH, (450/880)*HEIGHT))
                     screen.blit(wm_image, wm_rect)
+            
+            elif task=='Organize the shelf':
+                shelf_animations = import_folder('../graphics/tasks/shelf')
+                frame_index = int((elapsed_time/total_time)*4.999)
+
+                if(frame_index<5):
+                    shelf_image = shelf_animations[frame_index]
+                    shelf_image = pygame.transform.scale(shelf_image, (400, 400))
+                    shelf_rect = shelf_image.get_rect(center=((800/1600)*WIDTH, (450/880)*HEIGHT))
+                    screen.blit(shelf_image, shelf_rect)
 
             if elapsed_time >= total_time:
                 return True
@@ -387,3 +399,34 @@ class BookTask:
             elif event.key == pygame.K_BACKSPACE:
                 if len(self.user_input) > 0:
                     self.user_input = self.user_input[:-1]
+
+
+class WalkTask:
+    def __init__(self, level):
+        self.level = level
+        self.trees = ['tree1', 'tree2', 'tree3', 'tree4']
+        self.subtasks_completed = {tree: False for tree in self.trees}
+        self.all_subtasks_completed = False
+
+    def check_subtask_completion(self, tree):
+        if self.level.interact_time and self.level.check_near_object(tree):
+            elapsed_time = time.time() - self.level.interact_time
+            if elapsed_time >= self.level.interact_wait:
+                self.subtasks_completed[tree] = True
+                self.level.interact_time = None # Reset interaction time
+
+    def update(self):
+        for tree in self.trees:
+            self.check_subtask_completion(tree)
+        self.all_subtasks_completed = all(self.subtasks_completed.values())
+        if self.all_subtasks_completed:
+            self.level.player.done_task = 1
+            print("Walk task completed")
+
+    def render(self):
+        for tree in self.trees:
+            if self.subtasks_completed[tree]:
+                continue
+            if self.level.interact_time and self.level.check_near_object(tree):
+                display_task(self.level, tree, self.level.interact_time, self.level.interact_wait)
+                break

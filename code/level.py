@@ -11,7 +11,8 @@ import sys
 import time
 
 index_to_name = {1419:'chair', 1389:'trashcan', 1357:'telephone', 1485:'bathtub', 1386:'sink', 1390:'books', 
-				 1391:'notes', 1480:'washing_machine', 1742:'door', 1738:'bed'}
+				 1391:'notes', 1480:'washing_machine', 1742:'door', 1738:'bed', 1709:'shelf', 192:'tree1', 96:'tree2',
+				 209:'tree3', 208:'tree4'}
 
 pygame.mixer.init()
 
@@ -55,7 +56,8 @@ bad_tasks = {1:["You browsed through social media for 2 hours.",  "Your mental h
 				5: ["You stayed in bed all day and didn't talk to anyone", "Your mental health is reduced by 20 points"]}
 happiness_reduced = {1:10, 2:10, 3:15, 4:15, 5:20}
 task_to_obj = {"Talk on phone":'telephone', "Go to balcony":'chair', "Clean out the trash":'trashcan', "Take a bath":'bathtub', "Do the dishes":'sink', 
-			   "Read a book":'books', 'Do the laundry':'washing_machine', "Buy groceries":'door', 'Take a nap':'bed'}
+			   "Read a book":'books', 'Do the laundry':'washing_machine', "Buy groceries":'door', 'Take a nap':'bed', "Organize the shelf":'shelf',
+				"Take a walk":['tree1', 'tree2', 'tree3', 'tree4']}
 
 difficulty_to_bad_task_wait = {'Easy':1500, 'Medium':1000, 'Hard':500}
 
@@ -110,6 +112,7 @@ class Level:
 		self.menu_music_running = 0
 
 		self.booktask = BookTask(self)
+		self.walktask = WalkTask(self)
 		self.book_active = False
 		# sprite setup
 		self.create_map()
@@ -297,6 +300,12 @@ class Level:
 		elif self.paused:
 			self.handle_music(1)
 
+		if self.task_list[0]=='Take a walk':
+			# print("walk task going on")
+			# print(self.interact_time)
+			self.walktask.update()
+			self.walktask.render()
+
 		self.booktask.render()
 		for event in self.events:
 			self.booktask.handle_input(event)
@@ -319,7 +328,18 @@ class Level:
 						elif check_for_object(self.nearest_object, 'notes') and not self.notes_active:
 							self.notes_active = True
 					elif event.key == pygame.K_i:
-						if check_for_object(self.nearest_object, task_to_obj[self.task_list[0]]) and not self.interact_time:
+						if self.task_list[0]=='Take a walk':
+							for obj in task_to_obj[self.task_list[0]]:
+								if check_for_object(self.nearest_object, obj) == True and not self.interact_time:
+									self.interact_time = time.time()
+									# print("hello")
+									# self.handle_music(4)
+									break
+								# if check_for_object(self.nearest_object, obj) and not self.interact_time():
+								# 	self.interact_time = time.time()
+								# 	self.handle_music(4)
+								# 	break
+						elif check_for_object(self.nearest_object, task_to_obj[self.task_list[0]]) and not self.interact_time:
 							self.interact_time = time.time()
 							self.handle_music(4)
 					else:
@@ -342,10 +362,11 @@ class Level:
 				self.handle_music(2)
 		
 	def handle_tasks(self):
+
 		if self.notes_active:
 			display_task(self, 'Check the notes', None)
 
-		if self.player.done_task == 0 and check_for_object(self.nearest_object, task_to_obj[self.task_list[0]]):
+		if self.player.done_task == 0 and check_for_object(self.nearest_object, task_to_obj[self.task_list[0]]) and self.task_list[0]!='Take a walk':
 			if (self.interact_time or self.phone_keypad_active):
 				# print(self.interact_time==None)
 				display_task(self, self.task_list[0], self.interact_time, self.interact_wait, self.phone_keypad_content)
@@ -360,7 +381,7 @@ class Level:
 				self.handle_music(2)
 				self.interact_time = None
 				self.player.show_player = True
-		else:
+		elif self.task_list[0]!='Take a walk':
 			self.handle_music(2)
 			self.interact_time = None
 			self.player.show_player = True
@@ -369,7 +390,7 @@ class Level:
 			self.booktask.active = False
 
 		if self.interact_time:
-			if self.task_list[0] == 'Talk on phone':
+			if self.task_list[0] == 'Talk on phone' or self.task_list[0]=='Take a walk':
 				pass
 			else:
 				if time.time() - self.interact_time >= self.interact_wait and check_for_object(self.nearest_object, task_to_obj[self.task_list[0]]):
@@ -438,7 +459,7 @@ class YSortCameraGroup(pygame.sprite.Group):
 		self.offset = pygame.math.Vector2()
 
 		# creating the floor
-		self.floor_surf = pygame.image.load('../map/basic_map.png').convert()
+		self.floor_surf = pygame.image.load('../map/new_map_files/basic_map.png').convert()
 		self.floor_rect = self.floor_surf.get_rect(topleft = (0,0))
 
 	def custom_draw(self,player):
