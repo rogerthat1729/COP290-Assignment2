@@ -44,8 +44,9 @@ def load_frames(directory):
             break
     return images
 
-def display_bg(menu, surface):
-    frames = menu.bg_frames
+# walk_animations = load_frames('../graphics/walkgif')
+
+def display_bg(menu, surface, frames):
     img = frames[int(menu.current_frame) % len(frames)]
     surface.blit(img, (0, 0))
     menu.current_frame += 0.1666667
@@ -73,7 +74,7 @@ class Menu:
 
     def draw(self, surface):
         pygame.display.set_caption("Petrichor")
-        display_bg(self, surface)
+        display_bg(self, surface, self.bg_frames)
         draw_title("Petrichor", surface)
         draw_text("Main Menu", pygame.font.Font("../graphics/font/joystix.ttf", 48), 'white', surface, mid_width-130, 250)
         for text, rect in self.buttons[self.current_menu]:
@@ -106,7 +107,7 @@ class StartMenu(Menu):
         self.difficulty_positions = [(mid_width-200, 580), (mid_width, 580), (mid_width+200, 580)]
 
     def draw(self, surface):
-        display_bg(self, surface)
+        display_bg(self, surface, self.bg_frames)
         draw_title("Petrichor", surface)
         draw_text("Start Menu", pygame.font.Font("../graphics/font/joystix.ttf", 48), 'white', surface, mid_width-130, 250)
         self.draw_characters(surface)
@@ -168,7 +169,7 @@ class SettingsMenu(Menu):
         self.current_frame = 0
 
     def draw(self, surface):
-        display_bg(self, surface)
+        display_bg(self, surface, self.bg_frames)
         draw_title("Petrichor", surface)
         draw_text("Settings Menu", pygame.font.Font("../graphics/font/joystix.ttf", 48), 'white', surface, mid_width-180, 250)
 

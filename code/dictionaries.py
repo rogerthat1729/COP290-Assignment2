@@ -1,4 +1,4 @@
-good_tasks = ["Organize the shelf", "Read a book", "Talk on phone", "Take a walk", "Take a nap", "Buy groceries", 
+good_tasks = ["Take a walk", "Organize the shelf", "Read a book", "Talk on phone", "Take a nap", "Buy groceries", 
               "Clean out the trash", "Do the dishes", "Do the laundry", 
                "Take a bath", "Go to balcony"]
 

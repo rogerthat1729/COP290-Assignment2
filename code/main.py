@@ -62,7 +62,7 @@ def main():
     intro_music_running = False
     outro_music_running = False
     game_music_running = False
-    pygame.mixer.music.load('../audio/bg.mp3')
+    pygame.mixer.music.load('../audio/mixed_intro2.mp3')
     pygame.mixer.music.play(-1)
 
     running = True

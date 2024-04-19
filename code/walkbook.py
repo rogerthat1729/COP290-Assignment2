@@ -2,6 +2,7 @@ import pygame
 from settings import *
 import time
 from tasks import display_task
+from start import load_frames, display_bg
 from intro import *
 
 class BookTask:
@@ -10,7 +11,7 @@ class BookTask:
         self.level = level
         self.pages = [[pygame.image.load('../graphics/tasks/cb/cb3.png'), pygame.image.load('../graphics/tasks/cb/cb1.png')],
                        [pygame.image.load('../graphics/tasks/cb/cb4.png'), pygame.image.load('../graphics/tasks/cb/cb1.png')],
-                         [pygame.image.load('../graphics/tasks/cb/cb5.png')]] # Example pages
+                         [pygame.image.load('../graphics/tasks/cb/cb5.png')]] 
         self.current_page = 0
         self.active = False
         self.code = "31415"
@@ -95,7 +96,7 @@ class WalkTask:
             if elapsed_time >= self.level.interact_wait:
                 self.subtasks_completed[tree] = True
                 self.completed_counter += 1
-                self.level.interact_time = None # Reset interaction time
+                self.level.interact_time = None
 
     def update(self):
         for tree in self.trees:
@@ -106,7 +107,7 @@ class WalkTask:
             self.completed_counter = 0
             self.subtasks_completed = {tree: False for tree in self.trees}
             self.all_subtasks_completed = False
-            print("Walk task completed")
+            # print("Walk task completed")
 
     def render(self):
         for tree in self.trees:

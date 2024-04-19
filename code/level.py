@@ -42,8 +42,8 @@ class Level:
 		self.interact_time = None
 		self.interact_wait = 4
 
-		self.gamebg_track_path = '../audio/gamebg.mp3'
-		self.menubg_track_path = '../audio/bg.mp3'
+		self.gamebg_track_path = '../audio/nocturne.mp3'
+		self.menubg_track_path = '../audio/mixed_intro2.mp3'
 
 		self.phone_keypad_content = ""
 		self.phone_keypad_active = False
@@ -64,6 +64,9 @@ class Level:
 		self.booktask = BookTask(self)
 		self.walktask = WalkTask(self)
 		self.book_active = False
+
+		self.current_frame = 0
+		self.walk_animations = load_frames('../graphics/walkgif')
 
 		self.create_map()
 
@@ -110,6 +113,10 @@ class Level:
 	
 	def handle_music(self, arg=None):	
 		if not arg:
+			if self.happy > 50:
+				self.gamebg_track_path = '../audio/gamebg.mp3'
+			else:
+				self.gamebg_track_path = '../audio/nocturne.mp3'
 			if self.menu_music_running == 0 and self.game_music_running == 1 and self.task_music_running == 0:
 				pygame.mixer.music.stop()
 				pygame.mixer.music.load(self.gamebg_track_path)
