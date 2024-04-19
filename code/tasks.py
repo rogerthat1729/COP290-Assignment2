@@ -217,7 +217,7 @@ def display_task(level, task, start_time, total_time=3, content=""):
             bar_position = ((700/1600)*WIDTH, (200/880)*HEIGHT)
             fill_length = (elapsed_time / total_time) * bar_length
 
-            if task=='tree4' and level.walktask.completed_counter==3:
+            if task in level.walktask.trees and level.walktask.completed_counter==3:
                 display_bg(level, screen, level.walk_animations)
                 draw_text("Rosa cleared her head after this walk", pygame.font.Font("../graphics/font/joystix.ttf", 48), '#d4e157', screen, 300, 450, offset=2)
 

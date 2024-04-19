@@ -48,7 +48,7 @@ class Level:
 
 		self.phone_keypad_content = ""
 		self.phone_keypad_active = False
-		self.correct_code = '69420'
+		self.correct_code = '67546'
 
 		self.notes_active = False
 
@@ -106,7 +106,10 @@ class Level:
 			self.bad_task = bad_tasks[bad_task_index]
 			self.pop_up_wait = 0
 			self.player.popup.active = True
+			prev = self.happy
 			self.happy = max(0, self.happy-happiness_reduced[bad_task_index])
+			if self.happy < 75 and prev >= 75:
+				self.game_music_running = 1
 		elif (not self.player.popup.active) and (not self.interact_time) and (not self.paused):
 			self.pop_up_wait += 1
 		if self.player.popup.active:
@@ -359,7 +362,7 @@ class YSortCameraGroup(pygame.sprite.Group):
 		self.half_height = self.display_surface.get_size()[1] // 2
 		self.offset = pygame.math.Vector2()
 
-		self.floor_surf = pygame.image.load('../map/new_map_files/basic_map.png').convert()
+		self.floor_surf = pygame.image.load('../map/new_map_files/map.png').convert()
 		self.floor_rect = self.floor_surf.get_rect(topleft = (0,0))
 
 	def custom_draw(self,player):

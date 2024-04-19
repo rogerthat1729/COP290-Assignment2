@@ -1,4 +1,4 @@
-good_tasks = ["Take a walk", "Organize the shelf", "Read a book", "Talk on phone", "Take a nap", "Buy groceries", 
+good_tasks = ["Talk on phone", "Take a walk", "Organize the shelf", "Read a book", "Take a nap", "Buy groceries", 
               "Clean out the trash", "Do the dishes", "Do the laundry", 
                "Take a bath", "Go to balcony"]
 
@@ -6,7 +6,7 @@ task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out 
                "Do the dishes":"sink", "Read a book":"book", 'Do the laundry':"wash", "Buy groceries":'door', 
                "Take a nap":"bed", "Take a walk":['tree1', 'tree2', 'tree3', 'tree4'], "Organize the shelf":"shelf"}
 
-phone_codes = ["69420", "43210", "98543", "87658", "38961"]
+phone_codes = ["67546", "43210", "98543", "87658", "38961"]
 
 task_to_points = {"Talk on phone": 15, "Go to balcony": 10, "Clean out the trash": 10, "Take a bath": 10, "Do the dishes": 15, 
                     "Read a book": 10, 'Do the laundry': 15, 'Buy groceries':10, "Take a nap": 10, 
