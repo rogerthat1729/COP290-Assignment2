@@ -24,6 +24,7 @@ class Level:
 
 		self.happy = 50
 		self.recovery = 0
+		self.recovery_rate = 0.05
 		self.task_list = good_tasks.copy()
 		self.bad_task = ""
 		self.player = Player((1980,1500),[self.visible_sprites],self.obstacle_sprites, character)
@@ -42,7 +43,7 @@ class Level:
 		self.interact_time = None
 		self.interact_wait = 4
 
-		self.gamebg_track_path = '../audio/nocturne.mp3'
+		self.gamebg_track_path = '../audio/nocturn.mp3'
 		self.menubg_track_path = '../audio/mixed_intro2.mp3'
 
 		self.phone_keypad_content = ""
@@ -113,10 +114,10 @@ class Level:
 	
 	def handle_music(self, arg=None):	
 		if not arg:
-			if self.happy > 50:
+			if self.happy >= 75:
 				self.gamebg_track_path = '../audio/gamebg.mp3'
 			else:
-				self.gamebg_track_path = '../audio/nocturne.mp3'
+				self.gamebg_track_path = '../audio/nocturn.mp3'
 			if self.menu_music_running == 0 and self.game_music_running == 1 and self.task_music_running == 0:
 				pygame.mixer.music.stop()
 				pygame.mixer.music.load(self.gamebg_track_path)
@@ -315,7 +316,7 @@ class Level:
 	
 	def update_recovery(self):
 		if(self.happy >= 75):
-			self.recovery = min(100, self.recovery+0.1)
+			self.recovery = min(100, self.recovery+self.recovery_rate)
 		else:
 			self.recovery = 0
 	

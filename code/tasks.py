@@ -130,11 +130,13 @@ def render_tasks(level):
         task_surface = font.render(txt, True, 'green')
         display_surf.blit(task_surface, (10, y))
         y += 40
-    # level.happy = max(0, level.happy-0.01)
     if level.player.done_task==1:
         level.handle_music(2)
         level.player.textbox_content = ""
+        prev = level.happy
         level.happy = min(100, level.happy+task_to_points[task_list[0]])
+        if prev < 75 and level.happy >= 75:
+            level.game_music_running = 1
         curr_task = level.task_list[0]
         level.task_list.pop(0)
         good_tasks.pop(good_tasks.index(curr_task))

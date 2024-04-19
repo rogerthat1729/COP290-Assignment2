@@ -45,9 +45,9 @@ def main():
     intro_screen7 = IntroScreen("She isolated herself from everyone, unable to find the strength to engage with the world around her.", "../graphics/intro/sad2.png") 
     intro_screen8 = IntroScreen("The darkness and despair had become unbearable for Rosa. She attempted to take her own life, ", "../graphics/intro/rope.png")
     intro_screen9 = IntroScreen("But fate had other plans for Rosa...", "../graphics/intro/rope.png")
-    intro_screen10 = IntroScreen("The rope she had fashioned was not properly secured, and Rosa found herself struggling for breath but still alive.", "../graphics/intro/rope.png")
+    intro_screen10 = IntroScreen("The rope she had fashioned was not properly secured, and Rosa found herself struggling for breath but still alive.", "../graphics/intro/introrope.png")
     intro_screen11 = IntroScreen("As she lay on the floor, gasping for air, her eyes landed on a framed photograph of her beloved brother Ethan.", "../graphics/intro/hope.png")
-    intro_screen12 = IntroScreen("His warm smile and kind eyes seemed to cut through the fog of her depression, igniting a glimmer of hope within her.", "../graphics/intro/hope.png")
+    intro_screen12 = IntroScreen("His warm smile and kind eyes seemed to cut through the fog of her depression, igniting a glimmer of hope within her.", "../graphics/intro/introlast.png")
 
     intro_screen_timer = 0
     fade_timer = 0
@@ -100,6 +100,7 @@ def main():
                         current_screen_index += 1
             elif current_menu == 'end':
                 current_menu = end_screen.handle_event(event)
+
         if current_menu == 'menu':
             menu.draw(screen)
         elif current_menu == 'start':
@@ -107,6 +108,8 @@ def main():
         elif current_menu == 'settings':
             settings_menu.draw(screen)
         elif current_menu == 'end':
+            end_screen.draw(screen, fade_timer)
+            fade_timer = min(255, fade_timer + 2)
             if game_music_running:
                 pygame.mixer.music.stop()
                 game_music_running = False
@@ -114,7 +117,6 @@ def main():
                 pygame.mixer.music.load('../audio/outro_good.mp3')
                 pygame.mixer.music.play(-1)
                 outro_music_running = True
-            end_screen.draw(screen)
         elif current_menu == 'intro' and current_screen_index < len(screens):
             screens[current_screen_index].render(screen, fade_timer)
             if menu_music_running:
@@ -140,8 +142,11 @@ def main():
             game = Game(start_menu.characters[start_menu.selected_character], start_menu.difficulties[start_menu.selected_difficulty], settings_menu.music_volume, settings_menu.game_volume)
             game_music_running = True
             game.run()
+            fade_timer = 0
+            print("Ended")
             current_menu = game.go_to
             current_screen_index = 0
+
         pygame.display.flip()
         clock.tick(60)
     sys.exit()
