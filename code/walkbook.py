@@ -2,6 +2,7 @@ import pygame
 from settings import *
 import time
 from tasks import display_task
+from intro import *
 
 class BookTask:
     def __init__(self, level):

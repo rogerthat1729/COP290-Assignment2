@@ -5,6 +5,7 @@ import sys
 from support import *
 from settings import *
 from start import *
+from intro import *
 from dictionaries import *
 
 FONT = pygame.font.Font("../graphics/font/joystix.ttf", 24)

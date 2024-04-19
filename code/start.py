@@ -21,9 +21,7 @@ def draw_text(text, font, color, surface, x, y, offset=4):
     surface.blit(textobj1, textrect1)
     surface.blit(textobj, textrect)
 
-
 def draw_button(text, rect, color, surface):
-    # pygame.draw.rect(surface, color, rect)
     draw_text(text, FONT, color, surface, rect.x + 20, rect.y + 10, 2)
 
 def draw_title(text, surface):
@@ -37,6 +35,7 @@ def load_frames(directory):
         if a == True:
             itr += 1
             img = pygame.image.load(os.path.join(directory, filename)).convert_alpha()
+            img = pygame.transform.scale(img, (WIDTH, HEIGHT))
             images.append(img)
             a = False
         else:
@@ -74,9 +73,6 @@ class Menu:
 
     def draw(self, surface):
         pygame.display.set_caption("Petrichor")
-        # bg = pygame.image.load('../graphics/ui/bg.png')
-        # bg = pygame.transform.scale(bg, (WIDTH, HEIGHT))
-        # surface.blit(bg, (0, 0))
         display_bg(self, surface)
         draw_title("Petrichor", surface)
         draw_text("Main Menu", pygame.font.Font("../graphics/font/joystix.ttf", 48), 'white', surface, mid_width-130, 250)
@@ -106,14 +102,10 @@ class StartMenu(Menu):
         self.bg_frames = load_frames('../graphics/girlrain')
         self.current_frame = 0
 
-        # Load images and set positions
         self.character_positions = [(mid_width-170, 400), (mid_width+230, 400)]
         self.difficulty_positions = [(mid_width-200, 580), (mid_width, 580), (mid_width+200, 580)]
 
     def draw(self, surface):
-        # pygame.display.set_caption("Petrichor")
-        # bg = pygame.image.load('../graphics/ui/bg.png')
-        # surface.blit(bg, (0, 0))
         display_bg(self, surface)
         draw_title("Petrichor", surface)
         draw_text("Start Menu", pygame.font.Font("../graphics/font/joystix.ttf", 48), 'white', surface, mid_width-130, 250)
@@ -122,8 +114,6 @@ class StartMenu(Menu):
         self.draw_buttons(surface)
 
     def draw_characters(self, surface):
-        # char_text = FONT.render("Select Character", True, (255, 255, 255))
-        # surface.blit(char_text, (mid_width-90, 350))
         draw_text("Select Character", FONT, '#ffee58', surface, mid_width-90, 350, 2)
         for i, image in enumerate(self.character_images):
             rect = pygame.Rect(*self.character_positions[i], image.get_width(), image.get_height())
@@ -132,8 +122,6 @@ class StartMenu(Menu):
             surface.blit(image, rect.topleft)
 
     def draw_difficulties(self, surface):
-        # diff_text = FONT.render("Select Difficulty", True, (255, 255, 255))
-        # surface.blit(diff_text, (mid_width-100, 530))
         draw_text("Select Difficulty", FONT, '#ffee58', surface, mid_width-100, 530, 2)
         for i, difficulty in enumerate(self.difficulties):
             text = FONT.render(difficulty, True, (255, 255, 255))
@@ -141,7 +129,6 @@ class StartMenu(Menu):
             rect = pygame.Rect(*self.difficulty_positions[i], text_rect.width, text_rect.height)
             if i == self.selected_difficulty:
                 pygame.draw.rect(surface, 'brown', rect)
-            # surface.blit(text, rect.topleft)
             draw_text(difficulty, FONT, 'white', surface, rect.x, rect.y, 2)
     
     def draw_buttons(self, surface):
@@ -150,13 +137,12 @@ class StartMenu(Menu):
     
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            # Check character selection
+
             for i, pos in enumerate(self.character_positions):
                 rect = pygame.Rect(*pos, self.character_images[i].get_width(), self.character_images[i].get_height())
                 if rect.collidepoint(event.pos):
                     self.selected_character = i
 
-            # Check difficulty selection
             for i, pos in enumerate(self.difficulty_positions):
                 rect = pygame.Rect(*pos, 100, 30)
                 if rect.collidepoint(event.pos):
@@ -172,9 +158,9 @@ class StartMenu(Menu):
 
 class SettingsMenu(Menu):
     def __init__(self):
-        self.music_volume = 50  # Default volume
-        self.game_volume = 50  # Default volume
-        # self.slider_positions = {'music': (mid_width, 350), 'game': (mid_width, 450)}
+        self.music_volume = 50 
+        self.game_volume = 50 
+
         self.sliders = {'music': pygame.Rect(mid_width-20, 450, 200, 20), 'game': pygame.Rect(mid_width-20, 550, 200, 20)}
         self.back_rect = pygame.Rect(mid_width, 650, 120, 50) 
 
@@ -182,29 +168,22 @@ class SettingsMenu(Menu):
         self.current_frame = 0
 
     def draw(self, surface):
-        # bg = pygame.image.load('../graphics/ui/bg.png')
-        # surface.blit(bg, (0, 0))
         display_bg(self, surface)
         draw_title("Petrichor", surface)
         draw_text("Settings Menu", pygame.font.Font("../graphics/font/joystix.ttf", 48), 'white', surface, mid_width-180, 250)
-        # Draw each slider
-        # music_text = FONT.render("Music Volume", True, (255, 255, 255))
-        # game_text = FONT.render("In-game Volume", True, (255, 255, 255))
-        # surface.blit(music_text, (mid_width-50, 400))
-        # surface.blit(game_text, (mid_width-70, 500))
+
         draw_text("Music Volume", FONT, 'white', surface, mid_width-50, 400, 2)
         draw_text("In-game Volume", FONT, 'white', surface, mid_width-70, 500, 2)
         for key, rect in self.sliders.items():
-            pygame.draw.rect(surface, GRAY, rect)  # The slider background
+            pygame.draw.rect(surface, GRAY, rect) 
             pygame.draw.rect(surface, WHITE, (rect.x, rect.y, self.music_volume if key == 'music' else self.game_volume, rect.height))  # The volume level
 
-        # Draw back button
         draw_button("Back", self.back_rect, '#ffee58', surface)
     
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             pos = event.pos
-            # Check if a slider is clicked and adjust volume
+            
             for key, rect in self.sliders.items():
                 if rect.collidepoint(pos):
                     if key == 'music':
