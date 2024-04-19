@@ -32,19 +32,22 @@ def draw_title(text, surface):
 def load_frames(directory):
     images = []
     a = True
+    itr = 0
     for filename in sorted(os.listdir(directory)):
         if a == True:
+            itr += 1
             img = pygame.image.load(os.path.join(directory, filename)).convert_alpha()
-            img = pygame.transform.scale(img, (WIDTH, HEIGHT))
             images.append(img)
             a = False
         else:
             a = True
+        if itr==20:
+            break
     return images
 
 def display_bg(menu, surface):
     frames = menu.bg_frames
-    img = pygame.transform.scale(frames[int(menu.current_frame) % len(frames)], (WIDTH, HEIGHT))
+    img = frames[int(menu.current_frame) % len(frames)]
     surface.blit(img, (0, 0))
     menu.current_frame += 0.1666667
 

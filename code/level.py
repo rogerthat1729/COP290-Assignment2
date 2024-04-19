@@ -298,8 +298,6 @@ class Level:
 				if time.time() - self.interact_time >= self.interact_wait and check_for_object(self.nearest_object, task_to_obj[self.task_list[0]]):
 					self.player.done_task = 1
 					self.interact_time = None
-		# pygame.mixer.music.play('../audio/bg.mp3')
-			
 	
 	def activate_objects(self):
 		player = self.player
@@ -316,8 +314,10 @@ class Level:
 				spr.update_image()
 	
 	def update_recovery(self):
-		if(self.happy >= 80):
-			self.recovery = min(100, self.recovery+0.05)
+		if(self.happy >= 75):
+			self.recovery = min(100, self.recovery+0.1)
+		else:
+			self.recovery = 0
 	
 	def check_near_object(self, objname):
 		for sprite in self.visible_sprites.sprites():

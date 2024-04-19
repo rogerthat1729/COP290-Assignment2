@@ -8,9 +8,9 @@ task_to_seq = {"Talk on phone": "phone", "Go to balcony": "balcony", "Clean out 
 
 phone_codes = ["69420", "43210", "98543", "87658", "38961"]
 
-task_to_points = {"Talk on phone": 5, "Go to balcony": 10, "Clean out the trash": 5, "Take a bath": 10, "Do the dishes": 15, 
+task_to_points = {"Talk on phone": 15, "Go to balcony": 10, "Clean out the trash": 10, "Take a bath": 10, "Do the dishes": 15, 
                     "Read a book": 10, 'Do the laundry': 15, 'Buy groceries':10, "Take a nap": 10, 
-                    'Take a walk':30, 'Organize the shelf':10}
+                    'Take a walk':40, 'Organize the shelf':10}
 
 bad_tasks = {1:["You browsed through social media for 2 hours.",  "Your mental health is reduced by 10 points."],
 			2:["You ate a lot of junk food.", "Your mental health is reduced by 10 points."],

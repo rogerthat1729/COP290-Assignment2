@@ -49,6 +49,8 @@ def main():
     intro_screen11 = IntroScreen("As she lay on the floor, gasping for air, her eyes landed on a framed photograph of her beloved brother Ethan.", "../graphics/intro/hope.png")
     intro_screen12 = IntroScreen("His warm smile and kind eyes seemed to cut through the fog of her depression, igniting a glimmer of hope within her.", "../graphics/intro/hope.png")
 
+    intro_screen_timer = 0
+    fade_timer = 0
     menu = Menu()
     start_menu = StartMenu()
     settings_menu = SettingsMenu()
@@ -93,6 +95,8 @@ def main():
             elif current_menu == 'intro':
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RIGHT:
+                        intro_screen_timer = 0
+                        fade_timer = 0
                         current_screen_index += 1
             elif current_menu == 'end':
                 current_menu = end_screen.handle_event(event)
@@ -112,7 +116,7 @@ def main():
                 outro_music_running = True
             end_screen.draw(screen)
         elif current_menu == 'intro' and current_screen_index < len(screens):
-            screens[current_screen_index].render(screen)
+            screens[current_screen_index].render(screen, fade_timer)
             if menu_music_running:
                 pygame.mixer.music.stop()
                 menu_music_running = False
@@ -120,6 +124,15 @@ def main():
                 pygame.mixer.music.load('../audio/intro.mp3')
                 pygame.mixer.music.play(-1)
                 intro_music_running = True
+            if intro_screen_timer >= 300:
+                if fade_timer > 0:
+                    fade_timer = max(0, fade_timer-20)
+                else:
+                    current_screen_index += 1
+                    intro_screen_timer = 0
+            else:
+                intro_screen_timer += 1
+                fade_timer = min(255, fade_timer+2)
         elif current_menu == 'intro' and current_screen_index >= len(screens):
             if intro_music_running:
                 pygame.mixer.music.stop()
